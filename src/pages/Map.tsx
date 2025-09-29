@@ -206,41 +206,117 @@ export default function Map() {
   };
 
   return (
-    <>
-      <div className="sidebar">
-        <h2>Search Swap</h2>
-        <input
-          type="text"
-          placeholder="Enter your city"
-          value={searchCity}
-          onChange={(e) => setSearchCity(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSearch();
-          }}
-        />
-        <button onClick={handleSearch}>Search</button>
-        <button onClick={handleAddSwapPoint}>+ Add Swap Point</button>
+    <div className="flex h-screen bg-gray-50">
+      {/* Sidebar */}
+      <div className="w-80 bg-white shadow-lg border-r border-gray-200 overflow-y-auto">
+        <div className="p-6">
+          {/* Header */}
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Search Swap
+            </h2>
+            <p className="text-gray-600 text-sm">
+              Find plants and swap locations near you
+            </p>
+          </div>
 
-        <hr />
-        <h3>Nearby Swap Points</h3>
-        <ul>
-          {swapPoints.map((sp) => (
-            <li key={sp.id}>
-              📍 {sp.name} — {sp.address}
-            </li>
-          ))}
-        </ul>
+          {/* Search Input */}
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Enter your city"
+              value={searchCity}
+              onChange={(e) => setSearchCity(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearch();
+              }}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
 
-        <h3>Nearby Available Plants</h3>
-        <ul>
-          {plants.map((loc) => (
-            <li key={loc.id}>
-              🌱 {loc.plant_name} — {loc.user_name} ({loc.city})
-            </li>
-          ))}
-        </ul>
+          {/* Buttons */}
+          <div className="flex flex-col space-y-3 mb-6">
+            <button
+              onClick={handleSearch}
+              className="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg font-semibold transition-colors duration-200"
+            >
+              Search
+            </button>
+            <button
+              onClick={handleAddSwapPoint}
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold transition-colors duration-200"
+            >
+              + Add Swap Point
+            </button>
+          </div>
+
+          <hr className="my-6 border-gray-300" />
+
+          {/* Swap Points Section */}
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Nearby Swap Points
+            </h3>
+            <ul className="space-y-3">
+              {swapPoints.map((sp) => (
+                <li
+                  key={sp.id}
+                  className="bg-blue-50 border border-blue-200 rounded-lg p-3"
+                >
+                  <div className="flex items-start space-x-2">
+                    <span className="text-blue-500 mt-1">📍</span>
+                    <div>
+                      <h4 className="font-medium text-gray-800">{sp.name}</h4>
+                      <p className="text-gray-600 text-sm">{sp.address}</p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+              {swapPoints.length === 0 && (
+                <li className="text-gray-500 text-center py-4">
+                  No swap points found
+                </li>
+              )}
+            </ul>
+          </div>
+
+          {/* Plants Section */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Nearby Available Plants
+            </h3>
+            <ul className="space-y-3">
+              {plants.map((loc) => (
+                <li
+                  key={loc.id}
+                  className="bg-green-50 border border-green-200 rounded-lg p-3"
+                >
+                  <div className="flex items-start space-x-2">
+                    <span className="text-green-500 mt-1">🌱</span>
+                    <div>
+                      <h4 className="font-medium text-gray-800">
+                        {loc.plant_name}
+                      </h4>
+                      <p className="text-gray-600 text-sm">
+                        by {loc.user_name}
+                      </p>
+                      <p className="text-gray-500 text-sm">📍 {loc.city}</p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+              {plants.length === 0 && (
+                <li className="text-gray-500 text-center py-4">
+                  No plants available
+                </li>
+              )}
+            </ul>
+          </div>
+        </div>
       </div>
-      <div id="map-container" ref={mapContainerRef} />
-    </>
+
+      {/* Map Container */}
+      <div id="map-container" ref={mapContainerRef} className="flex-1" />
+    </div>
   );
 }

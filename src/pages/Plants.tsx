@@ -15,8 +15,8 @@ interface Plant {
   luz?: string;
   agua?: string;
   disponible?: boolean;
-  interval_days?: number; // cada cuántos días regar
-  last_watered?: string; // última fecha regada
+  interval_days?: number;
+  last_watered?: string;
 }
 
 export default function Plants() {
@@ -35,7 +35,6 @@ export default function Plants() {
     return user;
   };
 
-  // Leer plantas
   const fetchPlants = async () => {
     const user = await fetchUser();
     if (!user) return;
@@ -48,7 +47,6 @@ export default function Plants() {
     else setPlants(data || []);
   };
 
-  // Crear planta
   const addPlant = async () => {
     const user = await fetchUser();
     if (!user) return alert("No user logged in");
@@ -66,17 +64,14 @@ export default function Plants() {
     }
   };
 
-  // Borrar planta
   const deletePlant = async (id: number) => {
     const { error } = await supabase.from("plants").delete().eq("id", id);
     if (error) console.error(error);
     else fetchPlants();
   };
 
-  // Editar planta
   const updatePlant = async () => {
     if (!editingPlant) return;
-
     const { error } = await supabase
       .from("plants")
       .update(editingPlant)
@@ -93,257 +88,171 @@ export default function Plants() {
     fetchPlants();
   }, [showMine]);
 
-  return (
-    <div>
-      <h1>Plants</h1>
+  const plantInputs = [
+    { label: "Nombre común", key: "nombre_comun", type: "text" },
+    { label: "Nombre científico", key: "nombre_cientifico", type: "text" },
+    { label: "Especie", key: "especie", type: "text" },
+    { label: "Familia", key: "familia", type: "text" },
+    { label: "Propagación", key: "propagacion", type: "text" },
+    { label: "Clima", key: "clima", type: "text" },
+    { label: "Suelo", key: "suelo", type: "text" },
+    { label: "Luz", key: "luz", type: "text" },
+    { label: "Agua", key: "agua", type: "text" },
+    {
+      label: "Intervalo de riego (días)",
+      key: "interval_days",
+      type: "number",
+    },
+    { label: "Última riego", key: "last_watered", type: "date" },
+  ];
 
-      <label>
+  const renderInputs = (plant: Partial<Plant>, setPlant: any) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+      {plantInputs.map(({ label, key, type }) => (
+        <input
+          key={key}
+          type={type}
+          placeholder={label}
+          value={plant[key as keyof Plant] || ""}
+          onChange={(e) => {
+            const value =
+              type === "number" ? Number(e.target.value) : e.target.value;
+            setPlant({ ...plant, [key]: value });
+          }}
+          className="p-2 border rounded w-full dark:bg-gray-700 dark:text-gray-100"
+        />
+      ))}
+      <label className="flex items-center gap-2 mt-2">
+        <input
+          type="checkbox"
+          checked={!!plant.disponible}
+          onChange={(e) => setPlant({ ...plant, disponible: e.target.checked })}
+          className="form-checkbox"
+        />
+        Disponible
+      </label>
+    </div>
+  );
+
+  return (
+    <div className="p-6 space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+        🌱 Plants
+      </h1>
+
+      <label className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
         <input
           type="checkbox"
           checked={showMine}
           onChange={() => setShowMine(!showMine)}
-        />{" "}
+          className="form-checkbox"
+        />
         Show only my plants
       </label>
 
-      {/* Formulario para nueva planta */}
-      <div>
-        <h3>Add Plant</h3>
-        <input
-          type="text"
-          placeholder="Nombre común"
-          value={newPlant.nombre_comun || ""}
-          onChange={(e) =>
-            setNewPlant({ ...newPlant, nombre_comun: e.target.value })
-          }
-        />
-        <input
-          type="text"
-          placeholder="Nombre científico"
-          value={newPlant.nombre_cientifico || ""}
-          onChange={(e) =>
-            setNewPlant({ ...newPlant, nombre_cientifico: e.target.value })
-          }
-        />
-        <input
-          type="text"
-          placeholder="Especie"
-          value={newPlant.especie || ""}
-          onChange={(e) =>
-            setNewPlant({ ...newPlant, especie: e.target.value })
-          }
-        />
-        <input
-          type="text"
-          placeholder="Familia"
-          value={newPlant.familia || ""}
-          onChange={(e) =>
-            setNewPlant({ ...newPlant, familia: e.target.value })
-          }
-        />
-        <input
-          type="text"
-          placeholder="Propagación"
-          value={newPlant.propagacion || ""}
-          onChange={(e) =>
-            setNewPlant({ ...newPlant, propagacion: e.target.value })
-          }
-        />
-        <input
-          type="text"
-          placeholder="Clima"
-          value={newPlant.clima || ""}
-          onChange={(e) => setNewPlant({ ...newPlant, clima: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Suelo"
-          value={newPlant.suelo || ""}
-          onChange={(e) => setNewPlant({ ...newPlant, suelo: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Luz"
-          value={newPlant.luz || ""}
-          onChange={(e) => setNewPlant({ ...newPlant, luz: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Agua"
-          value={newPlant.agua || ""}
-          onChange={(e) => setNewPlant({ ...newPlant, agua: e.target.value })}
-        />
-        <input
-          type="number"
-          placeholder="Intervalo de riego (días)"
-          value={newPlant.interval_days || 7}
-          onChange={(e) =>
-            setNewPlant({ ...newPlant, interval_days: Number(e.target.value) })
-          }
-        />
-
-        <input
-          type="date"
-          placeholder="Último riego"
-          value={
-            newPlant.last_watered || new Date().toISOString().split("T")[0]
-          }
-          onChange={(e) =>
-            setNewPlant({ ...newPlant, last_watered: e.target.value })
-          }
-        />
-
-        <label>
-          Disponible:
-          <input
-            type="checkbox"
-            checked={!!newPlant.disponible}
-            onChange={(e) =>
-              setNewPlant({ ...newPlant, disponible: e.target.checked })
-            }
-          />
-        </label>
-
-        <button onClick={addPlant}>Add Plant</button>
+      {/* Formulario nueva planta */}
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow space-y-2">
+        <h3 className="font-semibold text-gray-800 dark:text-gray-100">
+          Add Plant
+        </h3>
+        {renderInputs(newPlant, setNewPlant)}
+        <button
+          onClick={addPlant}
+          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mt-2"
+        >
+          Add Plant
+        </button>
       </div>
 
       {/* Lista de plantas */}
-      <ul>
+      <ul className="space-y-2">
         {plants.map((plant) => (
-          <li key={plant.id}>
+          <li
+            key={plant.id}
+            className="bg-white dark:bg-gray-800 p-3 rounded shadow flex flex-col md:flex-row justify-between items-start md:items-center space-y-2 md:space-y-0"
+          >
             {editingPlant?.id === plant.id ? (
-              <div>
-                <input
-                  type="text"
-                  placeholder="Nombre común"
-                  value={editingPlant.nombre_comun}
-                  onChange={(e) =>
-                    setEditingPlant({
-                      ...editingPlant,
-                      nombre_comun: e.target.value,
-                    })
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Nombre científico"
-                  value={editingPlant.nombre_cientifico || ""}
-                  onChange={(e) =>
-                    setEditingPlant({
-                      ...editingPlant,
-                      nombre_cientifico: e.target.value,
-                    })
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Especie"
-                  value={editingPlant.especie || ""}
-                  onChange={(e) =>
-                    setEditingPlant({
-                      ...editingPlant,
-                      especie: e.target.value,
-                    })
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Familia"
-                  value={editingPlant.familia || ""}
-                  onChange={(e) =>
-                    setEditingPlant({
-                      ...editingPlant,
-                      familia: e.target.value,
-                    })
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Propagación"
-                  value={editingPlant.propagacion || ""}
-                  onChange={(e) =>
-                    setEditingPlant({
-                      ...editingPlant,
-                      propagacion: e.target.value,
-                    })
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Clima"
-                  value={editingPlant.clima || ""}
-                  onChange={(e) =>
-                    setEditingPlant({ ...editingPlant, clima: e.target.value })
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Suelo"
-                  value={editingPlant.suelo || ""}
-                  onChange={(e) =>
-                    setEditingPlant({ ...editingPlant, suelo: e.target.value })
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Luz"
-                  value={editingPlant.luz || ""}
-                  onChange={(e) =>
-                    setEditingPlant({ ...editingPlant, luz: e.target.value })
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Agua"
-                  value={editingPlant.agua || ""}
-                  onChange={(e) =>
-                    setEditingPlant({ ...editingPlant, agua: e.target.value })
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="Intervalo de riego (días)"
-                  value={editingPlant.interval_days || ""}
-                  onChange={(e) =>
-                    setEditingPlant({
-                      ...editingPlant,
-                      interval_days: e.target.value,
-                    })
-                  }
-                />
-                <input
-                  type="date"
-                  placeholder="Último riego"
-                  value={editingPlant.last_watered || ""}
-                  onChange={(e) =>
-                    setEditingPlant({
-                      ...editingPlant,
-                      last_watered: e.target.value,
-                    })
-                  }
-                />
-                <label>
-                  Disponible:
-                  <input
-                    type="checkbox"
-                    checked={!!editingPlant.disponible}
-                    onChange={(e) =>
-                      setEditingPlant({
-                        ...editingPlant,
-                        disponible: e.target.checked,
-                      })
-                    }
-                  />
-                </label>
-                <button onClick={updatePlant}>Save</button>
-                <button onClick={() => setEditingPlant(null)}>Cancel</button>
+              <div className="w-full">
+                {renderInputs(editingPlant, setEditingPlant)}
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={updatePlant}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditingPlant(null)}
+                    className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             ) : (
-              <div>
-                <b>{plant.nombre_comun}</b> ({plant.nombre_cientifico || "?"}){" "}
-                {plant.disponible ? "(Disponible)" : "(No disponible)"}
-                <button onClick={() => setEditingPlant(plant)}>Edit</button>
-                <button onClick={() => deletePlant(plant.id)}>Delete</button>
+              <div className="flex flex-col md:flex-row justify-between w-full items-start md:items-center gap-2">
+                <div className="flex flex-col md:flex-row gap-2 flex-wrap">
+                  <span className="font-semibold">{plant.nombre_comun}</span>
+                  <span className="text-gray-500 dark:text-gray-300">
+                    {plant.nombre_cientifico || "?"}
+                  </span>
+                  {plant.especie && (
+                    <span className="text-gray-500 dark:text-gray-300">
+                      {plant.especie}
+                    </span>
+                  )}
+                  {plant.familia && (
+                    <span className="text-gray-500 dark:text-gray-300">
+                      {plant.familia}
+                    </span>
+                  )}
+                  {plant.propagacion && (
+                    <span className="text-gray-500 dark:text-gray-300">
+                      {plant.propagacion}
+                    </span>
+                  )}
+                  {plant.clima && (
+                    <span className="text-gray-500 dark:text-gray-300">
+                      {plant.clima}
+                    </span>
+                  )}
+                  {plant.suelo && (
+                    <span className="text-gray-500 dark:text-gray-300">
+                      {plant.suelo}
+                    </span>
+                  )}
+                  {plant.luz && (
+                    <span className="text-gray-500 dark:text-gray-300">
+                      {plant.luz}
+                    </span>
+                  )}
+                  {plant.agua && (
+                    <span className="text-gray-500 dark:text-gray-300">
+                      {plant.agua}
+                    </span>
+                  )}
+                  <span
+                    className={
+                      plant.disponible ? "text-green-500" : "text-red-500"
+                    }
+                  >
+                    {plant.disponible ? "Disponible" : "No disponible"}
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setEditingPlant(plant)}
+                    className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => deletePlant(plant.id)}
+                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             )}
           </li>

@@ -176,11 +176,14 @@ export default function Calendar() {
           }
         >
           <option value="">Selecciona swap point</option>
-          {swapPoints.map((sp) => (
-            <option key={sp.id} value={sp.id}>
-              {sp.name} ({sp.address})
-            </option>
-          ))}
+          {swapPoints.map((sp) => {
+            const city = sp.address.split(",").pop()?.trim() || "";
+            return (
+              <option key={sp.id} value={sp.id}>
+                {sp.name} ({city})
+              </option>
+            );
+          })}
         </select>
         <button
           onClick={addEvent}
