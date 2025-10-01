@@ -34,16 +34,7 @@ header {
   border: none;
 }
 
-/* Mapa */
-#map-container {
-  position: absolute;
-  top: 60px; /* debajo del header */
-  left: 300px; /* al lado del sidebar */
-  right: 0;
-  bottom: 0;
-  background-color: lightgrey; /* para ver dónde está mientras carga */
-  z-index: 1;
-}
+
 
 /* Logos y animaciones */
 .logo {
