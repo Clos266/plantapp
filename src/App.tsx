@@ -16,7 +16,7 @@ export default function App() {
         {/* Header fijo arriba */}
         {/* <Header /> */}
 
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-1">
           {/* Sidebar fijo a la izquierda */}
           <Sidebar />
 
