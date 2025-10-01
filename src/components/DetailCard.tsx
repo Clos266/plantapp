@@ -45,17 +45,17 @@ export default function DetailCard({ item, onClose }: DetailCardProps) {
           </p>
         )}
 
-        {/* Descripción (si existe) */}
+        {/* Descripción */}
         {item.description && (
           <p className="text-gray-700 dark:text-gray-200 mb-2">
             {item.description}
           </p>
         )}
 
-        {/* Extras según tipo */}
+        {/* Información adicional según tipo */}
         {item.type === "event" && item.date && (
           <p className="text-sm text-blue-600 dark:text-blue-400">
-            📅 {item.date} {item.location ? ` - 📍 ${item.location}` : ""}
+            📅 {item.date} {item.location ? `- 📍 ${item.location}` : ""}
           </p>
         )}
 

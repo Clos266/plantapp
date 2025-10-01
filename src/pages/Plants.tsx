@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
+import ImageUpload from "../components/ImageUpload";
 
 interface Plant {
   id: number;
@@ -17,6 +18,7 @@ interface Plant {
   disponible?: boolean;
   interval_days?: number;
   last_watered?: string;
+  image_url?: string;
 }
 
 export default function Plants() {
@@ -103,7 +105,7 @@ export default function Plants() {
       key: "interval_days",
       type: "number",
     },
-    { label: "Última riego", key: "last_watered", type: "date" },
+    { label: "Último riego", key: "last_watered", type: "date" },
   ];
 
   const renderInputs = (plant: Partial<Plant>, setPlant: any) => (
@@ -156,6 +158,14 @@ export default function Plants() {
           Add Plant
         </h3>
         {renderInputs(newPlant, setNewPlant)}
+
+        {/* Componente de subida de imagen */}
+        <ImageUpload
+          folder="plants"
+          initialUrl={newPlant.image_url}
+          onUpload={(url) => setNewPlant({ ...newPlant, image_url: url })}
+        />
+
         <button
           onClick={addPlant}
           className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mt-2"
@@ -172,8 +182,20 @@ export default function Plants() {
             className="bg-white dark:bg-gray-800 p-3 rounded shadow flex flex-col md:flex-row justify-between items-start md:items-center space-y-2 md:space-y-0"
           >
             {editingPlant?.id === plant.id ? (
-              <div className="w-full">
+              <div className="w-full space-y-2">
                 {renderInputs(editingPlant, setEditingPlant)}
+
+                {/* Subida de imagen en edición */}
+                <ImageUpload
+                  folder="plants"
+                  initialUrl={editingPlant.image_url}
+                  onUpload={(url) =>
+                    setEditingPlant(
+                      editingPlant ? { ...editingPlant, image_url: url } : null
+                    )
+                  }
+                />
+
                 <div className="flex gap-2 mt-2">
                   <button
                     onClick={updatePlant}
@@ -191,54 +213,66 @@ export default function Plants() {
               </div>
             ) : (
               <div className="flex flex-col md:flex-row justify-between w-full items-start md:items-center gap-2">
-                <div className="flex flex-col md:flex-row gap-2 flex-wrap">
-                  <span className="font-semibold">{plant.nombre_comun}</span>
-                  <span className="text-gray-500 dark:text-gray-300">
-                    {plant.nombre_cientifico || "?"}
-                  </span>
-                  {plant.especie && (
-                    <span className="text-gray-500 dark:text-gray-300">
-                      {plant.especie}
-                    </span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {/* Imagen de planta */}
+                  {plant.image_url && (
+                    <img
+                      src={plant.image_url}
+                      alt={plant.nombre_comun}
+                      className="w-20 h-20 object-cover rounded-lg"
+                    />
                   )}
-                  {plant.familia && (
+
+                  <div className="flex flex-col">
+                    <span className="font-semibold">{plant.nombre_comun}</span>
                     <span className="text-gray-500 dark:text-gray-300">
-                      {plant.familia}
+                      {plant.nombre_cientifico || "?"}
                     </span>
-                  )}
-                  {plant.propagacion && (
-                    <span className="text-gray-500 dark:text-gray-300">
-                      {plant.propagacion}
+                    {plant.especie && (
+                      <span className="text-gray-500 dark:text-gray-300">
+                        {plant.especie}
+                      </span>
+                    )}
+                    {plant.familia && (
+                      <span className="text-gray-500 dark:text-gray-300">
+                        {plant.familia}
+                      </span>
+                    )}
+                    {plant.propagacion && (
+                      <span className="text-gray-500 dark:text-gray-300">
+                        {plant.propagacion}
+                      </span>
+                    )}
+                    {plant.clima && (
+                      <span className="text-gray-500 dark:text-gray-300">
+                        {plant.clima}
+                      </span>
+                    )}
+                    {plant.suelo && (
+                      <span className="text-gray-500 dark:text-gray-300">
+                        {plant.suelo}
+                      </span>
+                    )}
+                    {plant.luz && (
+                      <span className="text-gray-500 dark:text-gray-300">
+                        {plant.luz}
+                      </span>
+                    )}
+                    {plant.agua && (
+                      <span className="text-gray-500 dark:text-gray-300">
+                        {plant.agua}
+                      </span>
+                    )}
+                    <span
+                      className={
+                        plant.disponible ? "text-green-500" : "text-red-500"
+                      }
+                    >
+                      {plant.disponible ? "Disponible" : "No disponible"}
                     </span>
-                  )}
-                  {plant.clima && (
-                    <span className="text-gray-500 dark:text-gray-300">
-                      {plant.clima}
-                    </span>
-                  )}
-                  {plant.suelo && (
-                    <span className="text-gray-500 dark:text-gray-300">
-                      {plant.suelo}
-                    </span>
-                  )}
-                  {plant.luz && (
-                    <span className="text-gray-500 dark:text-gray-300">
-                      {plant.luz}
-                    </span>
-                  )}
-                  {plant.agua && (
-                    <span className="text-gray-500 dark:text-gray-300">
-                      {plant.agua}
-                    </span>
-                  )}
-                  <span
-                    className={
-                      plant.disponible ? "text-green-500" : "text-red-500"
-                    }
-                  >
-                    {plant.disponible ? "Disponible" : "No disponible"}
-                  </span>
+                  </div>
                 </div>
+
                 <div className="flex gap-2">
                   <button
                     onClick={() => setEditingPlant(plant)}

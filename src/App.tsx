@@ -21,7 +21,7 @@ export default function App() {
           <Sidebar />
 
           {/* Contenido principal */}
-          <main className="flex-1 overflow-auto p-4 bg-gray-100 dark:bg-gray-900">
+          <main className="">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/profile" element={<Profile />} />
