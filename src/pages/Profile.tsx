@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import { useAuth } from "../contexts/AuthProvider";
 import Charts from "./Charts";
+import ImageUpload from "../components/ImageUpload";
 
 interface Profile {
   id: string;
@@ -11,6 +12,7 @@ interface Profile {
   ciudad?: string;
   lat?: number;
   lng?: number;
+  avatar_url?: string; // 👈 añadida para manejar la foto de perfil
 }
 
 interface Plant {
@@ -37,7 +39,6 @@ export default function Profile() {
   const [cp, setCp] = useState("");
   const [ciudad, setCiudad] = useState("");
 
-  // nuevas colecciones
   const [plants, setPlants] = useState<Plant[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
 
@@ -136,6 +137,28 @@ export default function Profile() {
     <div className="p-4 max-w-md mx-auto">
       <h1 className="text-2xl font-bold mb-4">Mi Perfil</h1>
 
+      {/* Avatar */}
+      <div className="flex justify-center mb-6">
+        <ImageUpload
+          folder="profiles" // 👈 bucket de storage
+          initialUrl={profile?.avatar_url || ""}
+          onUpload={async (newUrl) => {
+            if (!user) return;
+
+            const { error } = await supabase
+              .from("profiles")
+              .update({ avatar_url: newUrl })
+              .eq("id", user.id);
+
+            if (error) {
+              console.error("Error al guardar avatar:", error);
+            } else {
+              setProfile({ ...profile!, avatar_url: newUrl });
+            }
+          }}
+        />
+      </div>
+
       {/* Formulario de edición */}
       <div className="space-y-2 mb-6">
         <input
@@ -166,11 +189,13 @@ export default function Profile() {
           Guardar
         </button>
       </div>
+
       {/* Charts */}
       <div className="mt-10">
         <h2 className="text-xl font-bold mb-4">📊 Mis estadísticas</h2>
         <Charts />
       </div>
+
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 text-center mb-6">
         <div className="bg-green-50 rounded-xl p-3">

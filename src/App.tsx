@@ -16,7 +16,7 @@ export default function App() {
         {/* Header fijo arriba */}
         {/* <Header /> */}
 
-        <div className="flex flex-1">
+        <div className="">
           {/* Sidebar fijo a la izquierda */}
           <Sidebar />
 

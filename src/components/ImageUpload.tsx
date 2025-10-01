@@ -42,8 +42,6 @@ export default function ImageUpload({ folder, initialUrl, onUpload }: Props) {
       setLoading(false);
       return;
     }
-    ñ;
-
     setImageUrl(data.publicUrl);
     onUpload(data.publicUrl);
     setLoading(false);
