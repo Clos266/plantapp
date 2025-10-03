@@ -9,6 +9,5 @@ describe("supabaseClient", () => {
   it("should have Supabase methods", () => {
     expect(typeof supabase.from).toBe("function");
     expect(typeof supabase.auth.signInWithPassword).toBe("function");
-    q;
   });
 });
