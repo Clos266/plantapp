@@ -2,7 +2,7 @@
 import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
-import { supabase } from "../supabaseClient"; // <- importa la única instancia
+import { supabase } from "../services/supabaseClient"; // <- importa la única instancia
 
 interface AuthContextType {
   user: User | null;

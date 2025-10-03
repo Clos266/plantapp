@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../services/supabaseClient";
 import { useAuth } from "../contexts/AuthProvider";
 import Charts from "./Charts";
 import ImageUpload from "../components/ImageUpload";
@@ -134,7 +134,7 @@ export default function Profile() {
   const pendingWaterings = calculatePendingWaterings();
 
   return (
-    <div className="p-4 max-w-md mx-auto">
+    <div className="p-4 mt-6 max-w-md mx-auto">
       <h1 className="text-2xl font-bold mb-4">Mi Perfil</h1>
 
       {/* Avatar */}

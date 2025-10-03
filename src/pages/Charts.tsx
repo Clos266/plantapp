@@ -13,7 +13,7 @@ import {
   TimeScale,
 } from "chart.js";
 import { Bar, Doughnut, Line, Pie } from "react-chartjs-2";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../services/supabaseClient";
 import { addDays, startOfWeek, format } from "date-fns";
 
 ChartJS.register(

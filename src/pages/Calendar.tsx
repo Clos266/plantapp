@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../services/supabaseClient";
 import { addDays, formatISO } from "date-fns";
 
 interface Plant {

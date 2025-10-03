@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "../App.css";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../services/supabaseClient";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN!;
 

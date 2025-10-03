@@ -14,7 +14,7 @@ export default function App() {
     <Router>
       <div className="flex flex-col h-screen">
         {/* Header fijo arriba */}
-        {/* <Header /> */}
+        <Header />
 
         <div className="">
           {/* Sidebar fijo a la izquierda */}

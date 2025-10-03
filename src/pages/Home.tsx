@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../services/supabaseClient";
 import SearchBar from "../components/SearchBar";
 import HorizontalSlider from "../components/HorizontalSlider";
 import DetailCard from "../components/DetailCard";
