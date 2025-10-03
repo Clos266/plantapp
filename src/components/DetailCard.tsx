@@ -1,5 +1,3 @@
-import React from "react";
-
 interface DetailCardProps {
   item: {
     id: number | string;
