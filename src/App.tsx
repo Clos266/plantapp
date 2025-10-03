@@ -7,7 +7,7 @@ import Plants from "./pages/Plants";
 import Map from "./pages/Map";
 import Calendar from "./pages/Calendar";
 import Charts from "./pages/Charts";
-import Auth from "./pages/Auth";
+import Auth from "./pages/AuthPage";
 
 export default function App() {
   return (
