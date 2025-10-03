@@ -1,9 +1,6 @@
-// src/hooks/useAuthHandlers.ts
-import { useAuth } from "../contexts/AuthProvider";
+import { signIn, signOut, signUp } from "../services/authService";
 
 export function useAuthHandlers(email: string, password: string) {
-  const { signUp, signIn } = useAuth();
-
   const handleSignUp = async () => {
     try {
       await signUp(email, password);
@@ -22,5 +19,14 @@ export function useAuthHandlers(email: string, password: string) {
     }
   };
 
-  return { handleSignIn, handleSignUp };
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      alert("Logout successful!");
+    } catch (err: any) {
+      alert("Error logging out: " + err.message);
+    }
+  };
+
+  return { handleSignIn, handleSignUp, handleSignOut };
 }
