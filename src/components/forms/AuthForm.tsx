@@ -1,4 +1,7 @@
 // src/components/forms/AuthForm.tsx
+import { Input } from "../ui/Input";
+import { Button } from "../ui/Button";
+
 type AuthFormProps = {
   email: string;
   password: string;
@@ -19,35 +22,27 @@ export function AuthForm({
   return (
     <>
       <div className="flex flex-col gap-4">
-        <input
+        <Input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-400"
         />
-        <input
+        <Input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-400"
         />
       </div>
 
       <div className="flex flex-col gap-3 mt-6">
-        <button
-          onClick={onSignIn}
-          className="bg-green-500 text-white font-semibold py-3 rounded-lg hover:bg-green-600 transition-colors"
-        >
+        <Button onClick={onSignIn} variant="primary">
           Login
-        </button>
-        <button
-          onClick={onSignUp}
-          className="bg-gray-200 text-gray-800 font-semibold py-3 rounded-lg hover:bg-gray-300 transition-colors"
-        >
+        </Button>
+        <Button onClick={onSignUp} variant="secondary">
           Sign Up
-        </button>
+        </Button>
       </div>
     </>
   );
