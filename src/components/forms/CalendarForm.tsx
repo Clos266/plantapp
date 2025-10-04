@@ -3,7 +3,12 @@ import { Button } from "../ui/Button";
 import { Plus, X } from "lucide-react";
 
 interface CalendarFormProps {
-  newEvent: { title: string; date: string; swap_point_id: string };
+  newEvent: {
+    title: string;
+    date: string;
+    swap_point_id: string;
+    isPublic?: boolean;
+  };
   setNewEvent: Function;
   swapPoints: { id: number; name: string; address: string }[];
   addEvent: () => void;
@@ -19,7 +24,7 @@ export default function CalendarForm({
 
   return (
     <div className="mb-6">
-      {/* Botón para abrir/cerrar el formulario */}
+      {/* Toggle button */}
       <Button
         variant="primary"
         onClick={() => setIsOpen(!isOpen)}
@@ -36,7 +41,7 @@ export default function CalendarForm({
         )}
       </Button>
 
-      {/* Formulario desplegable */}
+      {/* Dropdown form */}
       {isOpen && (
         <div className="mt-4 p-4 border rounded bg-white dark:bg-gray-800 shadow">
           <h2 className="font-semibold mb-2">Add Event</h2>
@@ -61,23 +66,38 @@ export default function CalendarForm({
               }
             />
 
-            <select
-              className="border p-2 rounded dark:bg-gray-700 dark:text-white"
-              value={newEvent.swap_point_id}
-              onChange={(e) =>
-                setNewEvent({ ...newEvent, swap_point_id: e.target.value })
-              }
-            >
-              <option value="">Select swap point</option>
-              {swapPoints.map((sp) => {
-                const city = sp.address.split(",").pop()?.trim() || "";
-                return (
-                  <option key={sp.id} value={sp.id}>
-                    {sp.name} ({city})
-                  </option>
-                );
-              })}
-            </select>
+            {/* Public/Private toggle */}
+            <label className="flex items-center gap-2 text-sm font-medium">
+              <input
+                type="checkbox"
+                checked={newEvent.isPublic || false}
+                onChange={(e) =>
+                  setNewEvent({ ...newEvent, isPublic: e.target.checked })
+                }
+              />
+              Public Event
+            </label>
+
+            {/* Swap point selector → only if public */}
+            {newEvent.isPublic && (
+              <select
+                className="border p-2 rounded dark:bg-gray-700 dark:text-white"
+                value={newEvent.swap_point_id}
+                onChange={(e) =>
+                  setNewEvent({ ...newEvent, swap_point_id: e.target.value })
+                }
+              >
+                <option value="">Select swap point</option>
+                {swapPoints.map((sp) => {
+                  const city = sp.address.split(",").pop()?.trim() || "";
+                  return (
+                    <option key={sp.id} value={sp.id}>
+                      {sp.name} ({city})
+                    </option>
+                  );
+                })}
+              </select>
+            )}
 
             <Button variant="secondary" onClick={addEvent}>
               Save
