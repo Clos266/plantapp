@@ -5,7 +5,7 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Plants from "./pages/Plants";
 import Map from "./pages/Map";
-import Calendar from "./pages/Calendar";
+import Calendar from "./components/layouts/Calendar";
 import Charts from "./pages/Charts";
 import Auth from "./pages/AuthPage";
 
