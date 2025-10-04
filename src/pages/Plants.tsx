@@ -115,7 +115,13 @@ export default function Plants() {
           key={key}
           type={type}
           placeholder={label}
-          value={plant[key as keyof Plant] || ""}
+          value={
+            typeof plant[key as keyof Plant] === "boolean"
+              ? ""
+              : plant[key as keyof Plant] !== undefined
+              ? (plant[key as keyof Plant] as string | number)
+              : ""
+          }
           onChange={(e) => {
             const value =
               type === "number" ? Number(e.target.value) : e.target.value;
