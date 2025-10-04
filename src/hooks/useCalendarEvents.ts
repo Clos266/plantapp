@@ -29,7 +29,7 @@ export function useCalendarEvents() {
     try {
       await addEventService(newEvent);
       setNewEvent({ title: "", date: "", swap_point_id: "" });
-      // reload events
+
       const {
         data: { user },
       } = await supabase.auth.getUser();
