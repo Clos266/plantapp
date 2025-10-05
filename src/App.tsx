@@ -8,20 +8,39 @@ import Map from "./pages/Map";
 import Calendar from "./components/layouts/Calendar";
 import Charts from "./pages/Charts";
 import Auth from "./pages/AuthPage";
+import { Toaster } from "react-hot-toast";
 
 export default function App() {
   return (
     <Router>
-      <div className="flex flex-col h-screen">
-        {/* Header fijo arriba */}
+      {/* 🌿 Toaster global (avisos de creación, edición, etc.) */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#333",
+            color: "#fff",
+          },
+          success: {
+            iconTheme: { primary: "#4ade80", secondary: "#fff" }, // verde suave
+          },
+          error: {
+            iconTheme: { primary: "#ef4444", secondary: "#fff" }, // rojo
+          },
+        }}
+      />
+
+      <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+        {/* 🔝 Header fijo */}
         <Header />
 
-        <div className="">
-          {/* Sidebar fijo a la izquierda */}
+        <div className="flex flex-1 overflow-hidden">
+          {/* 📚 Sidebar fijo a la izquierda */}
           <Sidebar />
 
-          {/* Contenido principal */}
-          <main className="">
+          {/* 🧩 Contenido principal */}
+          <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/profile" element={<Profile />} />

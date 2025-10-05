@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { supabase } from "../services/supabaseClient";
 
 interface Props {
-  folder: string; // subcarpeta dentro del bucket 'profiles'
+  folder: string;
   initialUrl?: string;
   onUpload: (url: string) => void;
   clickablePreview?: boolean;
@@ -30,7 +30,6 @@ export default function ImageUpload({
 
     setLoading(true);
 
-    // 👇 ahora el bucket es fijo: 'profiles'
     const { error: uploadError } = await supabase.storage
       .from("profiles")
       .upload(filePath, file, { upsert: true });
@@ -42,7 +41,6 @@ export default function ImageUpload({
       return;
     }
 
-    // 👇 obtener la URL pública del bucket correcto
     const { data } = supabase.storage.from("profiles").getPublicUrl(filePath);
 
     if (!data?.publicUrl) {
@@ -69,15 +67,15 @@ export default function ImageUpload({
           src={imageUrl}
           alt="Preview"
           onClick={handleImageClick}
-          className={`w-32 h-32 object-cover rounded-lg border cursor-pointer transition-opacity ${
-            loading ? "opacity-50 cursor-not-allowed" : "hover:opacity-80"
+          className={`w-16 h-16 object-cover rounded-full border cursor-pointer ${
+            loading ? "opacity-50" : ""
           }`}
         />
       )}
 
       {!clickablePreview && (
         <label
-          className={`bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded cursor-pointer ${
+          className={` font-semibold rounded-lg transition-colors focus:outline-none text-center py-2 px-3 sm:py-3 sm:px-4 text-sm sm:text-base bg-blue-500 text-white hover:bg-blue-600 dark:bg-green-600 dark:hover:bg-green-700 min-w-[110px] sm:min-w-[140px] md:min-w-[160px] w-full sm:w-auto${
             loading ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
