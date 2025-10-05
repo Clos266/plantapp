@@ -27,7 +27,7 @@ export default function Plants() {
   }
 
   return (
-    <div className="p-5 space-y-5 bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div className=" space-y-5 bg-gray-50 dark:bg-gray-900 min-h-screen">
       {/* Header and toggle */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">

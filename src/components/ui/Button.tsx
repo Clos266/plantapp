@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes } from "react";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "secondary" | "danger";
-  size?: "auto" | "md" | "full";
+  size?: "xs" | "sm" | "md" | "full";
 };
 
 export function Button({
@@ -11,9 +11,9 @@ export function Button({
   size = "md",
   ...props
 }: ButtonProps) {
+  // ✅ smaller base padding & font size
   const base =
-    // 👇 padding reducido en mobile, más grande en sm+
-    "font-semibold rounded-lg transition-colors focus:outline-none text-center py-2 px-3 sm:py-3 sm:px-4 text-sm sm:text-base";
+    "font-medium rounded-md transition-colors focus:outline-none text-center text-xs sm:text-sm py-1 px-2";
 
   const variants = {
     primary:
@@ -21,13 +21,14 @@ export function Button({
     secondary:
       "bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600",
     danger:
-      "bg-red-500 text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700",
+      "bg-red-100 text-red-700 hover:bg-red-500 hover:text-white dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-600 dark:hover:text-white",
   };
 
-  // 👇 Responsivo + uniforme
+  // ✅ reduced min-widths for better mobile fitting
   const sizes = {
-    auto: "w-auto",
-    md: "min-w-[110px] sm:min-w-[140px] md:min-w-[160px] w-full sm:w-auto",
+    xs: "w-auto min-w-[60px]",
+    sm: "w-auto min-w-[75px]",
+    md: "w-auto min-w-[100px]",
     full: "w-full",
   };
 

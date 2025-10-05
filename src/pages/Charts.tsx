@@ -224,10 +224,7 @@ export default function Charts() {
 
       {/* Load more / less button */}
       <div className="flex justify-center pt-2">
-        <Button
-          onClick={() => setShowAll(!showAll)}
-          className="w-full sm:w-auto bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
-        >
+        <Button variant="primary" onClick={() => setShowAll(!showAll)}>
           {showAll ? "Show Less" : "Load More"}
         </Button>
       </div>

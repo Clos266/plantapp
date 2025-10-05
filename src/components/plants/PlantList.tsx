@@ -60,19 +60,11 @@ export default function PlantList({
               </div>
 
               {/* Buttons */}
-              <div className="flex flex-col sm:flex-row gap-1 mt-2">
-                <Button
-                  variant="secondary"
-                  onClick={() => onEdit(plant.id!)}
-                  className="rounded-lg text-sm px-3 py-1.5 bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
-                >
+              <div className="flex flex-col gap-1 mt-2">
+                <Button variant="primary" onClick={() => onEdit(plant.id!)}>
                   Edit
                 </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => onDelete(plant.id!)}
-                  className="rounded-lg text-sm px-3 py-1.5 bg-red-500 text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700"
-                >
+                <Button variant="danger" onClick={() => onDelete(plant.id!)}>
                   Delete
                 </Button>
               </div>

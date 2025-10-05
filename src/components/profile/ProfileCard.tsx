@@ -40,10 +40,7 @@ export default function ProfileCard({
         </p>
 
         <div className="pt-2">
-          <Button
-            onClick={onEdit}
-            className="w-full sm:w-auto bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
-          >
+          <Button variant="primary" onClick={onEdit}>
             Edit Profile
           </Button>
         </div>
