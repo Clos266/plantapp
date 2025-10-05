@@ -1,4 +1,3 @@
-// src/hooks/usePlants.ts
 import { useState, useEffect } from "react";
 import { supabase } from "../services/supabaseClient";
 import {
@@ -73,16 +72,37 @@ export function usePlants() {
     }
   }
 
+  // 🗑️ Delete with confirmation toast
   async function remove(id: number) {
-    try {
-      await deletePlant(id);
-      setPlants((prev) => prev.filter((p) => p.id !== id));
-      toast.success("Plant deleted 🪴");
-    } catch (err: any) {
-      console.error(err);
-      toast.error("Failed to delete plant ❌");
-    }
+    toast((t) => (
+      <div className="flex flex-col gap-2 text-sm">
+        <span>Are you sure you want to delete this plant?</span>
+        <div className="flex gap-2 justify-end">
+          <button
+            onClick={() => {
+              deletePlant(id)
+                .then(() => {
+                  setPlants((prev) => prev.filter((p) => p.id !== id));
+                  toast.success("Plant deleted ❌");
+                })
+                .catch(() => toast.error("Failed to delete plant ❌"))
+                .finally(() => toast.dismiss(t.id));
+            }}
+            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs"
+          >
+            Delete
+          </button>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 px-3 py-1 rounded text-xs"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ));
   }
 
+  // ✅ Return everything needed by components
   return { plants, loading, error, add, update, remove, fetchPlants };
 }
