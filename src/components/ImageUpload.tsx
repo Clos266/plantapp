@@ -1,16 +1,23 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { supabase } from "../services/supabaseClient";
 
 interface Props {
-  folder: string; // Carpeta en Supabase Storage
-  initialUrl?: string; // URL inicial si ya hay imagen
-  onUpload: (url: string) => void; // Callback cuando se sube la imagen
+  folder: string; // subcarpeta dentro del bucket 'profiles'
+  initialUrl?: string;
+  onUpload: (url: string) => void;
+  clickablePreview?: boolean;
 }
 
-export default function ImageUpload({ folder, initialUrl, onUpload }: Props) {
+export default function ImageUpload({
+  folder,
+  initialUrl,
+  onUpload,
+  clickablePreview = false,
+}: Props) {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState(initialUrl || "");
   const [errorMsg, setErrorMsg] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const uploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrorMsg("");
@@ -23,28 +30,36 @@ export default function ImageUpload({ folder, initialUrl, onUpload }: Props) {
 
     setLoading(true);
 
-    // Subida a Supabase Storage
+    // 👇 ahora el bucket es fijo: 'profiles'
     const { error: uploadError } = await supabase.storage
-      .from(folder)
+      .from("profiles")
       .upload(filePath, file, { upsert: true });
 
     if (uploadError) {
-      setErrorMsg("Error al subir la imagen");
       console.error(uploadError);
+      setErrorMsg("Error al subir la imagen (ver consola)");
       setLoading(false);
       return;
     }
 
-    // Obtener URL pública
-    const { data } = supabase.storage.from(folder).getPublicUrl(filePath);
+    // 👇 obtener la URL pública del bucket correcto
+    const { data } = supabase.storage.from("profiles").getPublicUrl(filePath);
+
     if (!data?.publicUrl) {
       setErrorMsg("No se pudo obtener la URL pública");
       setLoading(false);
       return;
     }
+
     setImageUrl(data.publicUrl);
     onUpload(data.publicUrl);
     setLoading(false);
+  };
+
+  const handleImageClick = () => {
+    if (clickablePreview && !loading) {
+      fileInputRef.current?.click();
+    }
   };
 
   return (
@@ -53,24 +68,45 @@ export default function ImageUpload({ folder, initialUrl, onUpload }: Props) {
         <img
           src={imageUrl}
           alt="Preview"
-          className="w-32 h-32 object-cover rounded-lg border"
+          onClick={handleImageClick}
+          className={`w-32 h-32 object-cover rounded-lg border cursor-pointer transition-opacity ${
+            loading ? "opacity-50 cursor-not-allowed" : "hover:opacity-80"
+          }`}
         />
       )}
 
-      <label
-        className={`bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded cursor-pointer ${
-          loading ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-      >
-        {loading ? "Uploading..." : imageUrl ? "Change Image" : "Upload Image"}
+      {!clickablePreview && (
+        <label
+          className={`bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded cursor-pointer ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          {loading
+            ? "Uploading..."
+            : imageUrl
+            ? "Change Image"
+            : "Upload Image"}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={uploadFile}
+            className="hidden"
+            disabled={loading}
+          />
+        </label>
+      )}
+
+      {clickablePreview && (
         <input
+          ref={fileInputRef}
           type="file"
           accept="image/*"
           onChange={uploadFile}
           className="hidden"
           disabled={loading}
         />
-      </label>
+      )}
 
       {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
     </div>

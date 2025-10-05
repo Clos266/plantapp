@@ -21,14 +21,21 @@ export default function Profile() {
     setIsEditing(false);
     toast.success("Profile updated successfully");
   };
-
+  const handlePhotoChange = async (newUrl: string) => {
+    await saveProfile({ avatar_url: newUrl });
+    toast.success("Profile photo updated!");
+  };
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-50 dark:bg-gray-900 py-8">
       <Toaster position="top-right" />
 
       {!isEditing && (
         <>
-          <ProfileCard profile={profile} onEdit={() => setIsEditing(true)} />
+          <ProfileCard
+            profile={profile}
+            onEdit={() => setIsEditing(true)}
+            onPhotoChange={handlePhotoChange}
+          />
 
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 w-full max-w-md mt-8">
             <h2 className="text-xl font-bold mb-4 text-center">
