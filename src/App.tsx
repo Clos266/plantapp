@@ -13,7 +13,6 @@ import { Toaster } from "react-hot-toast";
 export default function App() {
   return (
     <Router>
-      {/* 🌿 Toaster global (avisos de creación, edición, etc.) */}
       <Toaster
         position="top-right"
         toastOptions={{
@@ -23,16 +22,15 @@ export default function App() {
             color: "#fff",
           },
           success: {
-            iconTheme: { primary: "#4ade80", secondary: "#fff" }, // verde suave
+            iconTheme: { primary: "#4ade80", secondary: "#fff" },
           },
           error: {
-            iconTheme: { primary: "#ef4444", secondary: "#fff" }, // rojo
+            iconTheme: { primary: "#ef4444", secondary: "#fff" },
           },
         }}
       />
 
       <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
-        {/* 🔝 Header fijo */}
         <Header />
 
         <div className="flex flex-1 overflow-hidden">

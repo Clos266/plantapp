@@ -5,6 +5,7 @@ import ProfileCard from "../components/profile/ProfileCard";
 import ProfileEditCard from "../components/profile/ProfileEditCard";
 import Charts from "./Charts";
 import toast, { Toaster } from "react-hot-toast";
+import Plants from "./Plants";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -42,6 +43,9 @@ export default function Profile() {
               📊 My Statistics
             </h2>
             <Charts />
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 w-full max-w-md mt-8">
+            <Plants />
           </div>
         </>
       )}
