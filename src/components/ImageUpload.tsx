@@ -6,6 +6,7 @@ interface Props {
   initialUrl?: string;
   onUpload: (url: string) => void;
   clickablePreview?: boolean;
+  size?: "sm" | "md" | "lg" | "xl"; // 👈 NEW
 }
 
 export default function ImageUpload({
@@ -13,6 +14,7 @@ export default function ImageUpload({
   initialUrl,
   onUpload,
   clickablePreview = false,
+  size = "md",
 }: Props) {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState(initialUrl || "");
@@ -36,15 +38,14 @@ export default function ImageUpload({
 
     if (uploadError) {
       console.error(uploadError);
-      setErrorMsg("Error al subir la imagen (ver consola)");
+      setErrorMsg("Error uploading image (see console)");
       setLoading(false);
       return;
     }
 
     const { data } = supabase.storage.from("profiles").getPublicUrl(filePath);
-
     if (!data?.publicUrl) {
-      setErrorMsg("No se pudo obtener la URL pública");
+      setErrorMsg("Could not get public URL");
       setLoading(false);
       return;
     }
@@ -60,6 +61,14 @@ export default function ImageUpload({
     }
   };
 
+  // 🎨 Size map for consistent scaling
+  const sizeClasses = {
+    sm: "w-16 h-16", // 64px
+    md: "w-24 h-24", // 96px
+    lg: "w-32 h-32", // 128px
+    xl: "w-40 h-40", // 160px
+  };
+
   return (
     <div className="flex flex-col items-start gap-2 mt-2">
       {imageUrl && (
@@ -67,7 +76,9 @@ export default function ImageUpload({
           src={imageUrl}
           alt="Preview"
           onClick={handleImageClick}
-          className={`w-16 h-16 object-cover rounded-full border cursor-pointer ${
+          className={`${
+            sizeClasses[size]
+          } object-cover rounded-full border cursor-pointer ${
             loading ? "opacity-50" : ""
           }`}
         />
@@ -75,7 +86,7 @@ export default function ImageUpload({
 
       {!clickablePreview && (
         <label
-          className={` font-semibold rounded-lg transition-colors focus:outline-none text-center py-2 px-3 sm:py-3 sm:px-4 text-sm sm:text-base bg-blue-500 text-white hover:bg-blue-600 dark:bg-green-600 dark:hover:bg-green-700 min-w-[110px] sm:min-w-[140px] md:min-w-[160px] w-full sm:w-auto${
+          className={`font-semibold rounded-lg transition-colors focus:outline-none text-center py-2 px-3 text-sm bg-blue-500 text-white hover:bg-blue-600 dark:bg-green-600 dark:hover:bg-green-700 ${
             loading ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >

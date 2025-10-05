@@ -129,8 +129,6 @@ export default function Charts() {
 
   return (
     <div className="p-4 space-y-6">
-      <h1 className="text-xl font-bold mb-4">📊 Plant Swap Statistics</h1>
-
       {/* Always visible: first chart */}
       <div className={chartContainer}>
         <h2 className="font-semibold mb-2 text-sm">Plants by Family</h2>

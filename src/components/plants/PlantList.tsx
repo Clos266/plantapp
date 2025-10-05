@@ -43,6 +43,7 @@ export default function PlantList({
               <div className="flex-shrink-0">
                 <ImageUpload
                   folder="plants"
+                  size="sm"
                   initialUrl={plant.image_url}
                   onUpload={(url) => onUpdate(plant.id!, { image_url: url })}
                   clickablePreview

@@ -18,9 +18,9 @@ export default function ProfileCard({
   onPhotoChange,
 }: ProfileCardProps) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 w-full max-w-md flex items-center gap-5">
-      {/* Avatar clickeable */}
-      <div className="flex-shrink-0">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 w-full max-w-md flex items-center gap-6">
+      {/* Larger avatar */}
+      <div>
         <ImageUpload
           folder="avatars"
           initialUrl={profile.avatar_url}
@@ -34,9 +34,6 @@ export default function ProfileCard({
         <p className="text-lg font-semibold">{profile.username || "—"}</p>
         <p className="text-gray-700 dark:text-gray-300">
           {profile.ciudad || "—"}
-        </p>
-        <p className="text-gray-700 dark:text-gray-300">
-          ZIP: {profile.cp || "—"}
         </p>
 
         <div className="pt-2">
