@@ -47,13 +47,40 @@ export function useSupabaseData() {
     id: number,
     updates: Partial<T>
   ) {
+    if (table === "swaps") {
+      // Special case for swaps: return relational fields too
+      const { data, error } = await supabase
+        .from("swaps")
+        .update(updates)
+        .eq("id", id)
+        .select(
+          `
+        id,
+        status,
+        sender_id,
+        receiver_id,
+        swap_point_id,
+        created_at,
+        updated_at,
+        sender_plant:sender_plant_id ( id, nombre_comun, image_url ),
+        receiver_plant:receiver_plant_id ( id, nombre_comun, image_url )
+      `
+        )
+        .single();
+
+      if (error) throw error;
+      return data as T;
+    }
+
     const { data, error } = await supabase
       .from(table)
       .update(updates)
       .eq("id", id)
-      .select();
+      .select()
+      .single();
+
     if (error) throw error;
-    return data?.[0];
+    return data as T;
   }
 
   async function deleteRow(table: string, id: number) {

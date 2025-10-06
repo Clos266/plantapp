@@ -24,13 +24,14 @@ export function useSwaps() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // 🔹 Load swaps and plants when user is ready
   useEffect(() => {
     if (!userId) return;
     loadSwaps();
     loadPlants();
   }, [userId]);
 
-  // 🔹 Real-time subscription
+  // 🔹 Real-time subscription for live updates
   useEffect(() => {
     if (!userId) return;
 
@@ -41,19 +42,23 @@ export function useSwaps() {
         { event: "*", schema: "public", table: "swaps" },
         (payload) => {
           setSwaps((prev) => {
-            const idx = prev.findIndex((s) => s.id === payload.new.id);
-            if (payload.eventType === "INSERT") {
-              return [payload.new as Swap, ...prev];
-            } else if (payload.eventType === "UPDATE") {
-              if (idx >= 0) {
-                const updated = [...prev];
-                updated[idx] = payload.new as Swap;
-                return updated;
-              }
-            } else if (payload.eventType === "DELETE") {
-              return prev.filter((s) => s.id !== payload.old.id);
+            const idx = prev.findIndex((s) => s.id === payload.new?.id);
+
+            switch (payload.eventType) {
+              case "INSERT":
+                return [payload.new as Swap, ...prev];
+              case "UPDATE":
+                if (idx >= 0) {
+                  const updated = [...prev];
+                  updated[idx] = payload.new as Swap;
+                  return updated;
+                }
+                return prev;
+              case "DELETE":
+                return prev.filter((s) => s.id !== payload.old?.id);
+              default:
+                return prev;
             }
-            return prev;
           });
         }
       )
@@ -64,53 +69,51 @@ export function useSwaps() {
     };
   }, [userId]);
 
-  // 🔹 Load swaps for current user
+  // 🔹 Fetch swaps for the current user
   async function loadSwaps() {
     if (!userId) return;
     setLoading(true);
 
     try {
-      // Swaps sent by the user
-      const { data: sentSwaps, error: sentError } = await supabase
-        .from("swaps")
-        .select(
+      const [sent, received] = await Promise.all([
+        supabase
+          .from("swaps")
+          .select(
+            `
+            id,
+            status,
+            created_at,
+            updated_at,
+            sender_id,
+            receiver_id,
+            swap_point_id,
+            sender_plant:sender_plant_id ( id, nombre_comun, image_url ),
+            receiver_plant:receiver_plant_id ( id, nombre_comun, image_url )
           `
-          id,
-          status,
-          created_at,
-          updated_at,
-          sender_id,
-          receiver_id,
-          swap_point_id,
-          sender_plant:sender_plant_id ( id, nombre_comun, image_url ),
-          receiver_plant:receiver_plant_id ( id, nombre_comun, image_url )
-        `
-        )
-        .eq("sender_id", userId);
-
-      if (sentError) throw sentError;
-
-      // Swaps received by the user
-      const { data: receivedSwaps, error: recvError } = await supabase
-        .from("swaps")
-        .select(
+          )
+          .eq("sender_id", userId),
+        supabase
+          .from("swaps")
+          .select(
+            `
+            id,
+            status,
+            created_at,
+            updated_at,
+            sender_id,
+            receiver_id,
+            swap_point_id,
+            sender_plant:sender_plant_id ( id, nombre_comun, image_url ),
+            receiver_plant:receiver_plant_id ( id, nombre_comun, image_url )
           `
-          id,
-          status,
-          created_at,
-          updated_at,
-          sender_id,
-          receiver_id,
-          swap_point_id,
-          sender_plant:sender_plant_id ( id, nombre_comun, image_url ),
-          receiver_plant:receiver_plant_id ( id, nombre_comun, image_url )
-        `
-        )
-        .eq("receiver_id", userId);
+          )
+          .eq("receiver_id", userId),
+      ]);
 
-      if (recvError) throw recvError;
+      if (sent.error) throw sent.error;
+      if (received.error) throw received.error;
 
-      const combined = [...(sentSwaps || []), ...(receivedSwaps || [])].sort(
+      const combined = [...(sent.data || []), ...(received.data || [])].sort(
         (a, b) =>
           new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
       );
@@ -124,7 +127,7 @@ export function useSwaps() {
     }
   }
 
-  // 🔹 Load available plants (from other users)
+  // 🔹 Load available plants from other users
   async function loadPlants() {
     if (!userId) return;
     const { data, error } = await supabase
@@ -144,6 +147,7 @@ export function useSwaps() {
     swap_point_id?: number;
   }) {
     if (!userId) throw new Error("User not authenticated");
+
     const newSwap = await insertRow<Swap>("swaps", {
       sender_id: userId,
       receiver_id: payload.receiver_id,
@@ -152,25 +156,27 @@ export function useSwaps() {
       swap_point_id: payload.swap_point_id ?? null,
       status: "pending",
     });
-    setSwaps((prev) => [newSwap, ...prev]);
+
+    if (newSwap) setSwaps((prev) => [newSwap, ...prev]);
   }
 
-  // 🔹 Accept a swap
+  // 🔹 Accept / Reject / Complete helpers
   async function acceptSwap(id: number) {
     const updated = await updateRow<Swap>("swaps", id, { status: "accepted" });
-    setSwaps((prev) => prev.map((s) => (s.id === id ? updated : s)));
+    if (updated)
+      setSwaps((prev) => prev.map((s) => (s.id === id ? updated : s)));
   }
 
-  // 🔹 Reject a swap
   async function rejectSwap(id: number) {
     const updated = await updateRow<Swap>("swaps", id, { status: "rejected" });
-    setSwaps((prev) => prev.map((s) => (s.id === id ? updated : s)));
+    if (updated)
+      setSwaps((prev) => prev.map((s) => (s.id === id ? updated : s)));
   }
 
-  // 🔹 Mark a swap as completed
   async function completeSwap(id: number) {
     const updated = await updateRow<Swap>("swaps", id, { status: "completed" });
-    setSwaps((prev) => prev.map((s) => (s.id === id ? updated : s)));
+    if (updated)
+      setSwaps((prev) => prev.map((s) => (s.id === id ? updated : s)));
   }
 
   return {
