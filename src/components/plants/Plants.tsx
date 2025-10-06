@@ -3,7 +3,7 @@ import { usePlants } from "../../hooks/usePlants";
 import PlantForm from "../forms/PlantForm";
 import PlantList from "./PlantList";
 import { Button } from "../ui/Button";
-import { Plus, Minus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 
 export default function Plants() {
   const { plants, add, update, remove, loading, error } = usePlants();
@@ -35,12 +35,19 @@ export default function Plants() {
         </h1>
 
         <Button
-          onClick={() => setShowForm((prev) => !prev)}
           variant="primary"
-          className="flex items-center gap-2 text-sm px-3 py-1.5 rounded-full"
-          aria-label={showForm ? "Hide form" : "Add plant"}
+          onClick={() => setShowForm(!showForm)}
+          className="flex items-center gap-2"
         >
-          {showForm ? <Minus size={18} /> : <Plus size={18} />}
+          {showForm ? (
+            <>
+              <X className="w-5 h-5 text-red-600" /> Cancel
+            </>
+          ) : (
+            <>
+              <Plus className="w-5 h-5 text-green-600" /> New Plant
+            </>
+          )}
         </Button>
       </div>
 

@@ -9,17 +9,21 @@ export default function Calendar() {
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">📅 Calendario</h1>
+      {/* Header con título y botón */}
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-xl font-bold text-2xl font-bold text-gray-800 dark:text-gray-100-gray-800 dark:text-gray-100">
+          📅 Calendar
+        </h1>
+        {/* Formulario para añadir evento */}
+        <CalendarForm
+          newEvent={newEvent}
+          setNewEvent={setNewEvent}
+          swapPoints={swapPoints}
+          addEvent={addEvent}
+        />
+      </div>
 
-      {/* Formulario para añadir evento */}
-      <CalendarForm
-        newEvent={newEvent}
-        setNewEvent={setNewEvent}
-        swapPoints={swapPoints}
-        addEvent={addEvent}
-      />
-
-      {/* Calendario */}
+      {/* Vista del calendario */}
       <CalendarView events={events} />
     </div>
   );

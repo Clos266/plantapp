@@ -9,6 +9,7 @@ import Calendar from "./components/layouts/Calendar";
 import Charts from "./pages/Charts";
 import Auth from "./pages/AuthPage";
 import { Toaster } from "react-hot-toast";
+import Swap from "./pages/Swap";
 
 export default function App() {
   return (
@@ -47,6 +48,7 @@ export default function App() {
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/charts" element={<Charts />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/swap" element={<Swap />} />
             </Routes>
           </main>
         </div>
