@@ -1,5 +1,4 @@
-// src/components/swap/SwapExplore.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchBar from "../SearchBar";
 import PlantList from "../plants/PlantList";
 import { Button } from "../ui/Button";
@@ -11,33 +10,44 @@ interface Props {
 }
 
 export default function SwapExplore({ plants, onProposeSwap }: Props) {
-  const [filteredPlants, setFilteredPlants] = useState(plants);
+  const [filteredPlants, setFilteredPlants] = useState<FullPlant[]>(plants);
 
+  // 🌀 Keep filtered list in sync when plants prop changes
+  useEffect(() => {
+    setFilteredPlants(plants);
+  }, [plants]);
+
+  // 🔍 Handle search with debounce from SearchBar
   const handleSearch = (query: string) => {
-    if (!query) return setFilteredPlants(plants);
+    if (!query.trim()) {
+      setFilteredPlants(plants);
+      return;
+    }
+
     const results = plants.filter((p) =>
-      p.nombre_comun.toLowerCase().includes(query.toLowerCase())
+      p.nombre_comun?.toLowerCase().includes(query.toLowerCase())
     );
     setFilteredPlants(results);
   };
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md">
+      {/* 🔹 Header */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-          Explora plantas disponibles
+          Explore available plants
         </h2>
         <Button className="border border-gray-300 bg-gray-100 hover:bg-gray-200">
-          Filtros
+          Filters
         </Button>
       </div>
 
-      {/* 🔍 Reutilizamos tu SearchBar con debounce */}
+      {/* 🔍 Search input */}
       <div className="mb-6">
         <SearchBar onSearch={handleSearch} />
       </div>
 
-      {/* 🌿 Reutilizamos PlantList en modo intercambio */}
+      {/* 🌿 Reuse PlantList in swap mode */}
       <PlantList
         plants={filteredPlants}
         swapMode
