@@ -11,10 +11,10 @@ interface Props {
   editingId?: number | null;
   onCancelEdit?: () => void;
 
-  /** 🔹 Si está activo, muestra botón "Proponer intercambio" en lugar de editar/borrar */
+  /** 🔹 Si está activo, muestra botón "swap " en lugar de editar/borrar */
   swapMode?: boolean;
 
-  /** 🔹 Función llamada al hacer clic en "Proponer intercambio" */
+  /** 🔹 Función llamada al hacer clic en "swap intercambio" */
   onProposeSwap?: (plant: FullPlant) => void;
 }
 
@@ -74,13 +74,13 @@ export default function PlantList({
               </div>
 
               {/* Botones: edit/delete o swap */}
-              <div className="flex flex-col gap-1 mt-2">
+              <div>
                 {swapMode ? (
                   <Button
                     className="bg-green-500 hover:bg-green-600 text-white"
                     onClick={() => onProposeSwap?.(plant)}
                   >
-                    Proponer intercambio
+                    swap
                   </Button>
                 ) : (
                   <>

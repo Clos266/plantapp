@@ -37,7 +37,7 @@ export default function SwapExplore({ plants, onProposeSwap }: Props) {
         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           Explore available plants
         </h2>
-        <Button className="border border-gray-300 bg-gray-100 hover:bg-gray-200">
+        <Button variant="secondary" size="sm" disabled>
           Filters
         </Button>
       </div>

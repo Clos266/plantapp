@@ -9,9 +9,9 @@ export function Button({
   children,
   variant = "primary",
   size = "md",
+  className,
   ...props
 }: ButtonProps) {
-  // ✅ smaller base padding & font size
   const base =
     "font-medium rounded-md transition-colors focus:outline-none text-center text-xs sm:text-sm py-1 px-2";
 
@@ -24,7 +24,6 @@ export function Button({
       "bg-red-100 text-red-700 hover:bg-red-500 hover:text-white dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-600 dark:hover:text-white",
   };
 
-  // ✅ reduced min-widths for better mobile fitting
   const sizes = {
     xs: "w-auto min-w-[60px]",
     sm: "w-auto min-w-[75px]",
@@ -34,7 +33,9 @@ export function Button({
 
   return (
     <button
-      className={`${base} ${variants[variant]} ${sizes[size]}`}
+      className={`${base} ${variants[variant]} ${sizes[size]} ${
+        className || ""
+      }`}
       {...props}
     >
       {children}
