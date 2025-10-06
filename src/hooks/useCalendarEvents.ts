@@ -1,14 +1,16 @@
+// src/hooks/useCalendarEvents.ts
 import { useEffect, useState } from "react";
+import { useSupabaseData } from "./useSupabaseData";
+import { fetchSwapPoints } from "../services/swapPointService";
+import type { SwapPoint } from "../services/swapPointService";
 import { fetchPlantEvents } from "../services/plantService";
 import {
   fetchUserEvents,
   addEvent as addEventService,
 } from "../services/eventService";
-import { fetchSwapPoints } from "../services/swapPointService";
-import { supabase } from "../services/supabaseClient";
-import type { SwapPoint } from "../services/swapPointService";
 
 export function useCalendarEvents() {
+  const { userId } = useSupabaseData();
   const [events, setEvents] = useState<{ title: string; start: any }[]>([]);
   const [swapPoints, setSwapPoints] = useState<SwapPoint[]>([]);
   const [newEvent, setNewEvent] = useState({
@@ -17,42 +19,25 @@ export function useCalendarEvents() {
     swap_point_id: "",
   });
 
-  const loadEvents = async (userId: string) => {
+  async function loadEvents() {
+    if (!userId) return;
     const [plantEvents, userEvents] = await Promise.all([
       fetchPlantEvents(userId),
       fetchUserEvents(userId),
     ]);
     setEvents([...plantEvents, ...userEvents]);
-  };
+  }
 
-  const addEvent = async () => {
-    try {
-      await addEventService(newEvent);
-      setNewEvent({ title: "", date: "", swap_point_id: "" });
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) loadEvents(user.id);
-    } catch (err: any) {
-      alert(err.message);
-    }
-  };
-
-  const loadSwapPoints = async () => {
-    const data = await fetchSwapPoints();
-    setSwapPoints(data || []);
-  };
+  async function addEvent() {
+    await addEventService(newEvent);
+    setNewEvent({ title: "", date: "", swap_point_id: "" });
+    loadEvents();
+  }
 
   useEffect(() => {
-    loadSwapPoints();
-    (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) loadEvents(user.id);
-    })();
-  }, []);
+    loadEvents();
+    fetchSwapPoints().then(setSwapPoints);
+  }, [userId]);
 
   return { events, swapPoints, newEvent, setNewEvent, addEvent };
 }

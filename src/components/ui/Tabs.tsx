@@ -1,76 +1,47 @@
-// src/components/ui/Tabs.tsx
-import React, { useState, isValidElement } from "react";
-import type { ReactNode } from "react";
+import React, { useState, type ReactNode } from "react";
 
 interface TabsProps {
-  value?: string;
-  onValueChange?: (value: string) => void;
+  defaultValue: string;
   children: ReactNode;
 }
 
-interface TabsListProps {
-  children: ReactNode;
+interface TabsContextValue {
+  active: string;
+  setActive: (val: string) => void;
 }
 
-interface TabsTriggerProps {
-  value: string;
-  activeValue?: string;
-  onValueChange?: (value: string) => void;
-  children: ReactNode;
-}
+const TabsContext = React.createContext<TabsContextValue | null>(null);
 
-interface TabsContentProps {
-  value: string;
-  activeValue?: string;
-  children: ReactNode;
-}
-
-export function Tabs({ value, onValueChange, children }: TabsProps) {
-  const [internalValue, setInternalValue] = useState(value);
-
-  const handleChange = (val: string) => {
-    setInternalValue(val);
-    onValueChange?.(val);
-  };
-
-  // Usamos React.Children.map y type assertions seguras
+export function Tabs({ defaultValue, children }: TabsProps) {
+  const [active, setActive] = useState(defaultValue);
   return (
-    <div>
-      {React.Children.map(children, (child) => {
-        if (isValidElement(child)) {
-          return React.cloneElement(child as React.ReactElement<any>, {
-            activeValue: internalValue,
-            onValueChange: handleChange,
-          });
-        }
-        return child;
-      })}
-    </div>
+    <TabsContext.Provider value={{ active, setActive }}>
+      <div>{children}</div>
+    </TabsContext.Provider>
   );
 }
 
-export function TabsList({ children }: TabsListProps) {
-  return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-2 flex gap-2">
-      {children}
-    </div>
-  );
+export function TabsList({ children }: { children: ReactNode }) {
+  return <div className="flex gap-2 mb-4">{children}</div>;
 }
 
 export function TabsTrigger({
   value,
-  activeValue,
-  onValueChange,
   children,
-}: TabsTriggerProps) {
-  const active = value === activeValue;
+}: {
+  value: string;
+  children: ReactNode;
+}) {
+  const ctx = React.useContext(TabsContext);
+  if (!ctx) throw new Error("TabsTrigger must be used inside <Tabs>");
+  const isActive = ctx.active === value;
   return (
     <button
-      onClick={() => onValueChange?.(value)}
+      onClick={() => ctx.setActive(value)}
       className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-        active
+        isActive
           ? "bg-green-500 text-white"
-          : "bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+          : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
       }`}
     >
       {children}
@@ -80,9 +51,13 @@ export function TabsTrigger({
 
 export function TabsContent({
   value,
-  activeValue,
   children,
-}: TabsContentProps) {
-  if (value !== activeValue) return null;
-  return <div className="mt-6">{children}</div>;
+}: {
+  value: string;
+  children: ReactNode;
+}) {
+  const ctx = React.useContext(TabsContext);
+  if (!ctx) throw new Error("TabsContent must be used inside <Tabs>");
+  if (ctx.active !== value) return null;
+  return <div className="animate-fade-in">{children}</div>;
 }

@@ -1,4 +1,6 @@
+// src/pages/Swap.tsx
 import { useState } from "react";
+import { useSession } from "@supabase/auth-helpers-react";
 import {
   Tabs,
   TabsList,
@@ -8,49 +10,30 @@ import {
 import SwapExplore from "../components/swap/SwapExplore";
 import SwapList from "../components/swap/SwapList";
 import SwapRequestModal from "../components/swap/SwapRequestModal";
+import { useSwaps } from "../hooks/useSwaps";
 
 export default function Swap() {
   const [activeTab, setActiveTab] = useState("explore");
   const [selectedPlant, setSelectedPlant] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
 
-  const otherPlants = [
-    {
-      id: 1,
-      nombre_comun: "Aloe Vera",
-      categoria: "Suculenta",
-      distancia: "2 km",
-    },
-    {
-      id: 2,
-      nombre_comun: "Sansevieria",
-      categoria: "Interior",
-      distancia: "5 km",
-    },
-    {
-      id: 3,
-      nombre_comun: "Cactus Echinopsis",
-      categoria: "Cactus",
-      distancia: "1.5 km",
-    },
-  ];
+  const session = useSession();
+  const userId = session?.user?.id;
+  const { swaps, plants, loading, error } = useSwaps();
 
-  const mySwaps = [
-    {
-      id: 1,
-      tipo: "enviado",
-      planta_mia: "Poto",
-      planta_otro: "Cactus Echinopsis",
-      estado: "pendiente",
-    },
-    {
-      id: 2,
-      tipo: "recibido",
-      planta_mia: "Aloe Vera",
-      planta_otro: "Suculenta Jade",
-      estado: "aceptado",
-    },
-  ];
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen text-gray-500">
+        Cargando intercambios...
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex justify-center items-center min-h-screen text-red-500">
+        Error: {error}
+      </div>
+    );
 
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
@@ -58,7 +41,7 @@ export default function Swap() {
         🌿 Intercambios de Plantas
       </h1>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs defaultValue={activeTab} onChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="explore">🔍 Buscar swaps</TabsTrigger>
           <TabsTrigger value="my-swaps">🔄 Mis intercambios</TabsTrigger>
@@ -66,7 +49,7 @@ export default function Swap() {
 
         <TabsContent value="explore">
           <SwapExplore
-            plants={otherPlants}
+            plants={plants}
             onProposeSwap={(plant) => {
               setSelectedPlant(plant);
               setShowModal(true);
@@ -75,7 +58,7 @@ export default function Swap() {
         </TabsContent>
 
         <TabsContent value="my-swaps">
-          <SwapList swaps={mySwaps} />
+          <SwapList swaps={swaps} />
         </TabsContent>
       </Tabs>
 

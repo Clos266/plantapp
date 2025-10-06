@@ -1,5 +1,6 @@
 // src/hooks/useProfileData.ts
 import { useEffect, useState } from "react";
+import { useSupabaseData } from "./useSupabaseData";
 import {
   fetchUserProfile,
   updateUserProfile,
@@ -7,54 +8,45 @@ import {
 import { fetchUserEvents } from "../services/eventService";
 import { fetchPlantEvents } from "../services/plantService";
 
-export function useProfileData(user: any) {
+export function useProfileData() {
+  const { userId } = useSupabaseData();
   const [profile, setProfile] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
   const [plants, setPlants] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
-
-    const loadData = async () => {
-      try {
-        setLoading(true);
-
-        const [profileData, userEvents, plantEvents] = await Promise.all([
-          fetchUserProfile(user.id),
-          fetchUserEvents(user.id),
-          fetchPlantEvents(user.id),
-        ]);
-
-        setProfile(profileData);
-        setEvents(userEvents);
-        setPlants(plantEvents);
-      } catch (error) {
-        console.error("Error loading profile data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    if (!userId) return;
     loadData();
-  }, [user]);
+  }, [userId]);
 
-  const saveProfile = async (updates: any) => {
-    if (!user) return;
+  async function loadData() {
     try {
-      await updateUserProfile(user.id, updates);
-      setProfile((prev: any) => ({ ...prev, ...updates }));
+      setLoading(true);
+      const [profileData, userEvents, plantEvents] = await Promise.all([
+        fetchUserProfile(userId!),
+        fetchUserEvents(userId!),
+        fetchPlantEvents(userId!),
+      ]);
+      setProfile(profileData);
+      setEvents(userEvents);
+      setPlants(plantEvents);
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error("Error loading profile data:", error);
+    } finally {
+      setLoading(false);
     }
-  };
+  }
+
+  async function saveProfile(updates: any) {
+    if (!userId) return;
+    await updateUserProfile(userId, updates);
+    setProfile((prev: any) => ({ ...prev, ...updates }));
+  }
 
   const calculatePendingWaterings = () => {
     const today = new Date();
-    return plants.filter((p) => {
-      const last = new Date(p.start);
-      return new Date(last) <= today;
-    }).length;
+    return plants.filter((p) => new Date(p.start) <= today).length;
   };
 
   return {

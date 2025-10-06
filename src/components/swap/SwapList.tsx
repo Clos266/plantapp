@@ -1,5 +1,4 @@
 // src/components/swap/SwapList.tsx
-import type { FullPlant } from "../../services/plantCrudService";
 
 interface Swap {
   id: number;

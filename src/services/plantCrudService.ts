@@ -4,7 +4,7 @@ import { supabase } from "./supabaseClient";
 export interface FullPlant {
   id?: number;
   created_at?: string;
-  user_id?: string;
+  user_id?: string | null;
   nombre_comun: string;
   nombre_cientifico?: string;
   especie?: string;
