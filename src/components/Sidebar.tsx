@@ -7,15 +7,15 @@ import {
   Calendar,
   BarChart2,
   LogIn,
+  ArrowLeftRight,
 } from "lucide-react";
 
 export default function Sidebar() {
   const menuItems = [
     { to: "/", label: "Home", icon: <Home size={20} /> },
-    { to: "/profile", label: "Perfil", icon: <User size={20} /> },
     { to: "/map", label: "Mapa", icon: <MapPin size={20} /> },
-    { to: "/calendar", label: "Calendario", icon: <Calendar size={20} /> },
-    { to: "/auth", label: "Login", icon: <LogIn size={20} /> },
+    { to: "/swap", label: "Swap", icon: <ArrowLeftRight size={20} /> },
+    { to: "/profile", label: "Perfil", icon: <User size={20} /> },
   ];
 
   return (

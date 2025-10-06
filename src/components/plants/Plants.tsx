@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { usePlants } from "../hooks/usePlants";
-import PlantForm from "../components/forms/PlantForm";
-import PlantList from "../components/plants/PlantList";
-import { Button } from "../components/ui/Button";
+import { usePlants } from "../../hooks/usePlants";
+import PlantForm from "../forms/PlantForm";
+import PlantList from "./PlantList";
+import { Button } from "../ui/Button";
 import { Plus, Minus } from "lucide-react";
 
 export default function Plants() {

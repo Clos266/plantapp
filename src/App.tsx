@@ -3,7 +3,7 @@ import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
-import Plants from "./pages/Plants";
+import Plants from "./components/plants/Plants";
 import Map from "./pages/Map";
 import Calendar from "./components/layouts/Calendar";
 import Charts from "./pages/Charts";
