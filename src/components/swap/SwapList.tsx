@@ -1,6 +1,7 @@
-// src/components/swap/SwapList.tsx
+import { useState, useRef, useEffect } from "react";
 import type { Swap } from "../../hooks/useSwaps";
 import { Button } from "../ui/Button";
+import SwapDetailCard from "./SwapDetailCard";
 
 interface Props {
   swaps: Swap[];
@@ -17,6 +18,26 @@ export default function SwapList({
   onComplete,
   userId,
 }: Props) {
+  const [selectedSwap, setSelectedSwap] = useState<Swap | null>(null);
+  const detailRef = useRef<HTMLDivElement | null>(null);
+
+  // 🔹 Close detail when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (detailRef.current && !detailRef.current.contains(e.target as Node)) {
+        setSelectedSwap(null);
+      }
+    }
+
+    if (selectedSwap) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [selectedSwap]);
+
   if (!swaps.length)
     return (
       <p className="text-center text-gray-600 dark:text-gray-400">
@@ -33,26 +54,29 @@ export default function SwapList({
       <div className="space-y-3">
         {swaps.map((swap) => {
           const isSender = swap.sender_id === userId;
-          const otherPlant = isSender
-            ? swap.receiver_plant?.nombre_comun
-            : swap.sender_plant?.nombre_comun;
 
           return (
             <div
               key={swap.id}
-              className="flex justify-between items-center p-3 rounded-lg bg-gray-100 dark:bg-gray-700"
+              className="p-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
             >
-              <div>
-                <p className="font-medium">
-                  {isSender ? "📤 Sent" : "📥 Received"}
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {swap.sender_plant?.nombre_comun} ↔{" "}
-                  {swap.receiver_plant?.nombre_comun}
-                </p>
-              </div>
+              {/* Header — only this part toggles the detail */}
+              <div
+                className="flex justify-between items-center cursor-pointer"
+                onClick={() =>
+                  setSelectedSwap(selectedSwap?.id === swap.id ? null : swap)
+                }
+              >
+                <div>
+                  <p className="font-medium">
+                    {isSender ? "📤 Sent" : "📥 Received"}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    {swap.sender_plant?.nombre_comun} ↔{" "}
+                    {swap.receiver_plant?.nombre_comun}
+                  </p>
+                </div>
 
-              <div className="flex flex-col items-end gap-2">
                 <span
                   className={`px-3 py-1 text-xs rounded-full capitalize ${
                     swap.status === "pending"
@@ -66,33 +90,23 @@ export default function SwapList({
                 >
                   {swap.status}
                 </span>
-
-                {swap.status === "pending" && isSender === false && (
-                  <div className="flex gap-2">
-                    <Button
-                      className="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1"
-                      onClick={() => onAccept?.(swap.id)}
-                    >
-                      Accept
-                    </Button>
-                    <Button
-                      className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1"
-                      onClick={() => onReject?.(swap.id)}
-                    >
-                      Reject
-                    </Button>
-                  </div>
-                )}
-
-                {swap.status === "accepted" && (
-                  <Button
-                    className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1"
-                    onClick={() => onComplete?.(swap.id)}
-                  >
-                    Mark as completed
-                  </Button>
-                )}
               </div>
+
+              {/* Expanded detail */}
+              {selectedSwap?.id === swap.id && (
+                <div
+                  ref={detailRef}
+                  className="mt-4 border-t border-gray-300 dark:border-gray-600 pt-4"
+                  onClick={(e) => e.stopPropagation()} // ❗ prevents closing when clicking inside
+                >
+                  <SwapDetailCard
+                    swap={swap}
+                    onAccept={onAccept!}
+                    onReject={onReject!}
+                    onComplete={onComplete!}
+                  />
+                </div>
+              )}
             </div>
           );
         })}

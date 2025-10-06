@@ -10,28 +10,38 @@ export interface SwapMessage {
   created_at: string;
 }
 
-export function useSwapChat(swapId: number | null) {
-  const { userId } = useSupabaseData();
+export function useSwapChat(swapId: number | null, userId?: string) {
+  const { userId: authUserId } = useSupabaseData();
+  const currentUserId = userId || authUserId;
+
   const [messages, setMessages] = useState<SwapMessage[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch existing messages
+  // 🔹 Fetch existing messages
   useEffect(() => {
     if (!swapId) return;
     setLoading(true);
 
-    supabase
-      .from("swap_messages")
-      .select("*")
-      .eq("swap_id", swapId)
-      .order("created_at", { ascending: true })
-      .then(({ data, error }) => {
-        if (!error && data) setMessages(data);
-        setLoading(false);
-      });
+    const fetchMessages = async () => {
+      const { data, error } = await supabase
+        .from("swap_messages")
+        .select("*")
+        .eq("swap_id", swapId)
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error("Error fetching messages:", error);
+      } else {
+        setMessages(data || []);
+      }
+
+      setLoading(false);
+    };
+
+    fetchMessages();
   }, [swapId]);
 
-  // Subscribe to new messages in real-time
+  // 🔹 Real-time subscription for new messages
   useEffect(() => {
     if (!swapId) return;
 
@@ -46,7 +56,12 @@ export function useSwapChat(swapId: number | null) {
           filter: `swap_id=eq.${swapId}`,
         },
         (payload) => {
-          setMessages((prev) => [...prev, payload.new as SwapMessage]);
+          const newMessage = payload.new as SwapMessage;
+          setMessages((prev) => {
+            // Prevent duplicates (sometimes happens on fast inserts)
+            const exists = prev.some((m) => m.id === newMessage.id);
+            return exists ? prev : [...prev, newMessage];
+          });
         }
       )
       .subscribe();
@@ -56,12 +71,19 @@ export function useSwapChat(swapId: number | null) {
     };
   }, [swapId]);
 
-  // Send a new message
+  // 🔹 Send a new message
   async function sendMessage(text: string) {
-    if (!swapId || !userId || !text.trim()) return;
-    await supabase
-      .from("swap_messages")
-      .insert([{ swap_id: swapId, sender_id: userId, message: text.trim() }]);
+    if (!swapId || !currentUserId || !text.trim()) return;
+
+    const { error } = await supabase.from("swap_messages").insert([
+      {
+        swap_id: swapId,
+        sender_id: currentUserId,
+        message: text.trim(),
+      },
+    ]);
+
+    if (error) console.error("Error sending message:", error);
   }
 
   return { messages, sendMessage, loading };
