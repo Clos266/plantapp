@@ -7,6 +7,7 @@ export default function Sidebar() {
     { to: "/map", label: "Mapa", icon: <MapPin size={20} /> },
     { to: "/swap", label: "Swap", icon: <ArrowLeftRight size={20} /> },
     { to: "/profile", label: "Perfil", icon: <User size={20} /> },
+    { to: "/auth", label: "Auth", icon: <User size={20} /> },
   ];
 
   return (
