@@ -5,8 +5,8 @@ import { AuthProvider } from "./contexts/AuthProvider";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    {/* <AuthProvider> */}
+    <App />
+    {/* </AuthProvider> */}
   </StrictMode>
 );
