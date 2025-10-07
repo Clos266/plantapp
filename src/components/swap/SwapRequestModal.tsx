@@ -45,6 +45,16 @@ export default function SwapRequestModal({ open, onClose, plant }: Props) {
       return;
     }
 
+    if (!plant) {
+      toast.error("Missing plant data.");
+      return;
+    }
+
+    if (!plant.user_id) {
+      toast.error("Receiver has no valid user ID.");
+      return;
+    }
+
     setLoading(true);
     try {
       await createSwap({

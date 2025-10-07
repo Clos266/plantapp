@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import type { Swap } from "../../hooks/useSwaps";
-import { Button } from "../ui/Button";
 import SwapDetailCard from "./SwapDetailCard";
 
 interface Props {
@@ -16,7 +15,6 @@ export default function SwapList({
   onAccept,
   onReject,
   onComplete,
-  userId,
 }: Props) {
   const [selectedSwap, setSelectedSwap] = useState<Swap | null>(null);
   const detailRef = useRef<HTMLDivElement | null>(null);

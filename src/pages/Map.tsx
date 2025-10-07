@@ -30,7 +30,7 @@ const normalizeText = (text: string) =>
     .toLowerCase();
 
 export default function Map() {
-  const mapRef = useRef<mapboxgl.Map>();
+  const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
 

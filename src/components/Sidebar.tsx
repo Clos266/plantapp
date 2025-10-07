@@ -1,14 +1,5 @@
 import { Link } from "react-router-dom";
-import {
-  Home,
-  User,
-  Leaf,
-  MapPin,
-  Calendar,
-  BarChart2,
-  LogIn,
-  ArrowLeftRight,
-} from "lucide-react";
+import { Home, User, MapPin, ArrowLeftRight } from "lucide-react";
 
 export default function Sidebar() {
   const menuItems = [

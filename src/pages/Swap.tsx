@@ -14,7 +14,7 @@ import { useSwaps } from "../hooks/useSwaps";
 import toast from "react-hot-toast";
 
 export default function Swap() {
-  const [activeTab, setActiveTab] = useState("explore");
+  // const [activeTab, setActiveTab] = useState("explore");
   const [selectedPlant, setSelectedPlant] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
 
