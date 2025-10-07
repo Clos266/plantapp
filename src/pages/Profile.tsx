@@ -10,8 +10,7 @@ import Calendar from "../components/layouts/Calendar";
 
 export default function Profile() {
   const { user } = useAuth();
-  const { profile, plants, events, loading, saveProfile } =
-    useProfileData(user);
+  const { profile, plants, events, loading, saveProfile } = useProfileData();
 
   const [isEditing, setIsEditing] = useState(false);
 

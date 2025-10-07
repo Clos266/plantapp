@@ -53,8 +53,6 @@ export default function SwapList({
 
       <div className="space-y-3">
         {swaps.map((swap) => {
-          const isSender = swap.sender_id === userId;
-
           return (
             <div
               key={swap.id}

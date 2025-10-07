@@ -12,7 +12,8 @@ import { fetchSwapPoints } from "../../services/swapPointService";
 interface Props {
   open: boolean;
   onClose: () => void;
-  plant: FullPlant | null; // Receiver’s plant
+  plant: FullPlant | null;
+  onSubmit: (swapData: any) => Promise<void>;
 }
 
 export default function SwapRequestModal({ open, onClose, plant }: Props) {

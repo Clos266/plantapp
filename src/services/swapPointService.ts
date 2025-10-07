@@ -5,6 +5,7 @@ export interface SwapPoint {
   id: number;
   name: string;
   address: string;
+  city?: string;
 }
 
 export async function fetchSwapPoints(): Promise<SwapPoint[]> {
