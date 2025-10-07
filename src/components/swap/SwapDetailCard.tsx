@@ -44,7 +44,7 @@ export default function SwapDetailCard({
         </div>
       </div>
 
-      {/* 🧾 Swap status */}
+      {/*  Swap status */}
       <div className="text-gray-700 dark:text-gray-300">
         <strong>Status: </strong>
         <span
