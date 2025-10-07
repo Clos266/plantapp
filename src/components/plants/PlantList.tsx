@@ -46,7 +46,7 @@ export default function PlantList({
               onCancel={onCancelEdit!}
             />
           ) : (
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 w-full flex items-center justify-between gap-5">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 w-full flex flex-col md:flex-row items-center md:items-start justify-between gap-4 md:gap-6">
               {/* Imagen clickeable igual que avatar */}
               <div className="flex-shrink-0">
                 <ImageUpload
@@ -59,28 +59,23 @@ export default function PlantList({
               </div>
 
               {/* Info planta */}
-              <div className="flex-1">
+              <div className="flex-1 text-center md:text-left">
                 <p className="font-semibold">{plant.nombre_comun}</p>
                 {plant.nombre_cientifico && (
                   <p className="text-sm text-gray-500">
                     {plant.nombre_cientifico}
                   </p>
                 )}
-                {plant.categoria && (
-                  <p className="text-xs text-gray-400 mt-1">
-                    {plant.categoria}
-                  </p>
-                )}
               </div>
 
               {/* Botones: edit/delete o swap */}
-              <div>
+              <div className="flex gap-2 mt-3 md:mt-0">
                 {swapMode ? (
                   <Button
-                    className="bg-green-500 hover:bg-green-600 text-white"
+                    variant="primary"
                     onClick={() => onProposeSwap?.(plant)}
                   >
-                    swap
+                    Swap
                   </Button>
                 ) : (
                   <>

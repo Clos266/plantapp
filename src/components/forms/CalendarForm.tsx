@@ -26,7 +26,7 @@ export default function CalendarForm({
     <div className="mb-6">
       {/* Toggle button */}
       <Button
-        variant="primary"
+        variant="secondary"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2"
       >

@@ -90,7 +90,7 @@ export default function Swap() {
         🌿 Plant Swaps
       </h1>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs defaultValue="explore">
         <TabsList>
           <TabsTrigger value="explore">🔍 Explore swaps</TabsTrigger>
           <TabsTrigger value="my-swaps">🔄 My swaps</TabsTrigger>

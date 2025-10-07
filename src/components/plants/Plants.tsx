@@ -35,7 +35,7 @@ export default function Plants() {
         </h1>
 
         <Button
-          variant="primary"
+          variant="secondary"
           onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2"
         >

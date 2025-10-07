@@ -21,7 +21,7 @@ export default function SwapDetailCard({
         🌿 Plant Swap #{swap.id}
       </h2>
 
-      {/* 🪴 Plant thumbnails */}
+      {/* Plant thumbnails */}
       <div className="flex items-center justify-center gap-6">
         <div className="flex flex-col items-center">
           <img
@@ -83,7 +83,7 @@ export default function SwapDetailCard({
       {/* 💬 Chat visible only when accepted */}
       {swap.status === "accepted" && (
         <>
-          <SwapChat swapId={swap.id} />
+          <SwapChat swapId={swap.id} userId={swap.sender_id} />
           <Button
             className="bg-blue-600 hover:bg-blue-700 text-white"
             onClick={() => onComplete(swap.id)}

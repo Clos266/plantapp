@@ -1,18 +1,24 @@
 import { useState, useRef, useEffect } from "react";
 import { useSwapChat } from "../../hooks/useSwapChat";
+import { supabase } from "../../services/supabaseClient";
 
-export default function ChatBox({
-  swapId,
-  userId,
-}: {
-  swapId: number;
-  userId: string;
-}) {
-  const { messages, sendMessage, loading } = useSwapChat(swapId, userId);
+export default function ChatBox({ swapId }: { swapId: number }) {
+  const [userId, setUserId] = useState<string | null>(null);
+  const { messages, sendMessage, loading } = useSwapChat(swapId, userId ?? "");
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  // 🔹 Auto-scroll when new messages arrive
+  // 🔹 Obtener userId del usuario actual
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) console.error("Error getting user:", error);
+      else setUserId(data.user?.id || null);
+    };
+    fetchUser();
+  }, []);
+
+  // 🔹 Auto-scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -21,6 +27,13 @@ export default function ChatBox({
     return (
       <p className="text-gray-500 dark:text-gray-400 text-center">
         Loading chat...
+      </p>
+    );
+
+  if (!userId)
+    return (
+      <p className="text-gray-500 dark:text-gray-400 text-center">
+        Loading user...
       </p>
     );
 
@@ -36,6 +49,7 @@ export default function ChatBox({
 
         {messages.map((m) => {
           const isMine = m.sender_id === userId;
+
           return (
             <div
               key={m.id}
@@ -43,12 +57,9 @@ export default function ChatBox({
                 isMine ? "items-end text-right" : "items-start text-left"
               }`}
             >
-              {/* Sender name */}
               <span className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                {isMine ? "You" : m.sender?.username || "User"}
+                {isMine ? "You" : "User"}
               </span>
-
-              {/* Message bubble */}
               <div
                 className={`p-2 rounded-lg max-w-[70%] break-words shadow-sm ${
                   isMine
@@ -65,7 +76,7 @@ export default function ChatBox({
         <div ref={bottomRef} />
       </div>
 
-      {/* Input field */}
+      {/* Input */}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -74,17 +85,21 @@ export default function ChatBox({
             setInput("");
           }
         }}
-        className="flex gap-2"
+        className="flex flex-col sm:flex-row gap-2 mt-2"
       >
         <input
-          className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 outline-none"
+          className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-600 
+               dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-green-500 
+               outline-none w-full"
           placeholder="Type a message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
+
         <button
           type="submit"
-          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors"
+          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg 
+               transition-colors w-full sm:w-auto"
         >
           Send
         </button>

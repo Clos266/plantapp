@@ -69,7 +69,7 @@ export default function SwapList({
               >
                 <div>
                   <p className="font-medium">
-                    {isSender ? "📤 Sent" : "📥 Received"}
+                    {/* {isSender ? "📤 Sent" : "📥 Received"} */}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-300">
                     {swap.sender_plant?.nombre_comun} ↔{" "}
