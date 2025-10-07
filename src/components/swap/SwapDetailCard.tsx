@@ -83,7 +83,7 @@ export default function SwapDetailCard({
       {/* 💬 Chat visible only when accepted */}
       {swap.status === "accepted" && (
         <>
-          <SwapChat swapId={swap.id} userId={swap.sender_id} />
+          <SwapChat swapId={swap.id} />
           <Button
             className="bg-blue-600 hover:bg-blue-700 text-white"
             onClick={() => onComplete(swap.id)}

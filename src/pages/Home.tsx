@@ -121,7 +121,7 @@ export default function Home() {
         title: p.nombre_comun,
         subtitle: `Propietario: ${p.user_id}`,
         image: p.image_url || "https://via.placeholder.com/300x200?text=Planta",
-        type: "plant",
+        type: "plant" as Item["type"],
       })),
     ];
 
@@ -139,7 +139,7 @@ export default function Home() {
         title: e.title,
         subtitle: `${e.date} - ${e.location}`,
         image: e.image_url || "https://via.placeholder.com/300x200?text=Evento",
-        type: "event",
+        type: "event" as Item["type"],
       })),
     ];
 
@@ -158,7 +158,7 @@ export default function Home() {
         subtitle: u.ciudad || "",
         image:
           u.avatar_url || "https://via.placeholder.com/300x200?text=Usuario",
-        type: "user",
+        type: "user" as Item["type"],
       })),
     ];
 

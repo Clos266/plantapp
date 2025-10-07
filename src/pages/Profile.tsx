@@ -13,7 +13,7 @@ export default function Profile() {
   const { profile, plants, events, loading, saveProfile } = useProfileData();
 
   const [isEditing, setIsEditing] = useState(false);
-
+  console.log(user, plants, events);
   if (loading) return <div>Loading...</div>;
   if (!profile) return <div>No profile found</div>;
 

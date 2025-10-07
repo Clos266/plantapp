@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useSwapChat } from "../../hooks/useSwapChat";
 import { supabase } from "../../services/supabaseClient";
 
-export default function ChatBox({ swapId }: { swapId: number }) {
+export default function SwapChat({ swapId }: { swapId: number }) {
   const [userId, setUserId] = useState<string | null>(null);
   const { messages, sendMessage, loading } = useSwapChat(swapId, userId ?? "");
   const [input, setInput] = useState("");

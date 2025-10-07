@@ -40,18 +40,22 @@ export function useSwaps() {
         "postgres_changes",
         { event: "*", schema: "public", table: "swaps" },
         (payload) => {
+          const newSwap = payload.new as Swap;
+          const oldSwap = payload.old as Swap;
+
           setSwaps((prev) => {
-            const idx = prev.findIndex((s) => s.id === payload.new.id);
+            const idx = prev.findIndex((s) => s.id === newSwap?.id);
+
             if (payload.eventType === "INSERT") {
-              return [payload.new as Swap, ...prev];
+              return [newSwap, ...prev];
             } else if (payload.eventType === "UPDATE") {
               if (idx >= 0) {
                 const updated = [...prev];
-                updated[idx] = payload.new as Swap;
+                updated[idx] = newSwap;
                 return updated;
               }
             } else if (payload.eventType === "DELETE") {
-              return prev.filter((s) => s.id !== payload.old.id);
+              return prev.filter((s) => s.id !== oldSwap?.id);
             }
             return prev;
           });
@@ -70,22 +74,30 @@ export function useSwaps() {
     setLoading(true);
 
     try {
+      type SwapRow = Swap & {
+        sender_plant: Partial<FullPlant>[] | Partial<FullPlant> | null;
+        receiver_plant: Partial<FullPlant>[] | Partial<FullPlant> | null;
+      };
+
       const { data: sentSwaps, error: sentError } = await supabase
         .from("swaps")
         .select(
           `
-          id,
-          status,
-          created_at,
-          updated_at,
-          sender_plant_id,
-          receiver_plant_id,
-          swap_point_id,
-          sender_plant:sender_plant_id ( id, nombre_comun, image_url ),
-          receiver_plant:receiver_plant_id ( id, nombre_comun, image_url )
-        `
+        id,
+        sender_id,
+        receiver_id,
+        status,
+        created_at,
+        updated_at,
+        sender_plant_id,
+        receiver_plant_id,
+        swap_point_id,
+        sender_plant:sender_plant_id ( id, nombre_comun, image_url ),
+        receiver_plant:receiver_plant_id ( id, nombre_comun, image_url )
+      `
         )
-        .eq("sender_id", userId);
+        .eq("sender_id", userId)
+        .returns<SwapRow[]>(); // 👈 tipado explícito
 
       if (sentError) throw sentError;
 
@@ -93,25 +105,38 @@ export function useSwaps() {
         .from("swaps")
         .select(
           `
-          id,
-          status,
-          created_at,
-          updated_at,
-          sender_plant_id,
-          receiver_plant_id,
-          swap_point_id,
-          sender_plant:sender_plant_id ( id, nombre_comun, image_url ),
-          receiver_plant:receiver_plant_id ( id, nombre_comun, image_url )
-        `
+        id,
+        sender_id,
+        receiver_id,
+        status,
+        created_at,
+        updated_at,
+        sender_plant_id,
+        receiver_plant_id,
+        swap_point_id,
+        sender_plant:sender_plant_id ( id, nombre_comun, image_url ),
+        receiver_plant:receiver_plant_id ( id, nombre_comun, image_url )
+      `
         )
-        .eq("receiver_id", userId);
+        .eq("receiver_id", userId)
+        .returns<SwapRow[]>(); // 👈 tipado explícito
 
       if (recvError) throw recvError;
 
-      const combined = [...(sentSwaps || []), ...(receivedSwaps || [])].sort(
-        (a, b) =>
-          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-      );
+      const combined = [...(sentSwaps || []), ...(receivedSwaps || [])]
+        .map((s) => ({
+          ...s,
+          sender_plant: Array.isArray(s.sender_plant)
+            ? (s.sender_plant[0] as Partial<FullPlant>)
+            : (s.sender_plant as Partial<FullPlant>),
+          receiver_plant: Array.isArray(s.receiver_plant)
+            ? (s.receiver_plant[0] as Partial<FullPlant>)
+            : (s.receiver_plant as Partial<FullPlant>),
+        }))
+        .sort(
+          (a, b) =>
+            new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+        );
 
       setSwaps(combined);
     } catch (err: any) {
@@ -168,12 +193,10 @@ export function useSwaps() {
   // 🔹 Mark a swap as completed → exchange plant ownership
   async function completeSwap(id: number) {
     try {
-      // 1️⃣ Update the swap status
       const updated = await updateRow<Swap>("swaps", id, {
         status: "completed",
       });
 
-      // 2️⃣ Fetch the involved plants
       const { data: swapData, error: swapError } = await supabase
         .from("swaps")
         .select("sender_plant_id, receiver_plant_id")
@@ -182,7 +205,6 @@ export function useSwaps() {
 
       if (swapError || !swapData) throw swapError;
 
-      // 3️⃣ Get their current owners
       const { data: plantsData, error: plantsError } = await supabase
         .from("plants")
         .select("id, user_id")
@@ -202,7 +224,6 @@ export function useSwaps() {
       if (!senderPlant || !receiverPlant)
         throw new Error("Invalid plant IDs in swap");
 
-      // 4️⃣ Swap the user_id values
       const { error: updateError1 } = await supabase
         .from("plants")
         .update({ user_id: receiverPlant.user_id })
@@ -215,7 +236,6 @@ export function useSwaps() {
 
       if (updateError1 || updateError2) throw updateError1 || updateError2;
 
-      // 5️⃣ Update local state
       setSwaps((prev) => prev.map((s) => (s.id === id ? updated : s)));
 
       console.log("✅ Plants successfully swapped between users!");
