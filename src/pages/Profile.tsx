@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthProvider";
 import { useProfileData } from "../hooks/useProfileData";
 import ProfileCard from "../components/profile/ProfileCard";
 import ProfileEditCard from "../components/profile/ProfileEditCard";
-import Charts from "./Charts";
+import Charts from "../components/charts/Charts";
 import toast, { Toaster } from "react-hot-toast";
 import Plants from "../components/plants/Plants";
 import Calendar from "../components/layouts/Calendar";

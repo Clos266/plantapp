@@ -6,7 +6,7 @@ import Profile from "./pages/Profile";
 import Plants from "./components/plants/Plants";
 import Map from "./pages/Map";
 import Calendar from "./components/layouts/Calendar";
-import Charts from "./pages/Charts";
+import Charts from "./components/charts/Charts";
 import Auth from "./pages/AuthPage";
 import { Toaster } from "react-hot-toast";
 import Swap from "./pages/Swap";
